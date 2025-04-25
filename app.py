@@ -11,7 +11,8 @@ from math import ceil
 import random
 from decimal import Decimal
 from datetime import datetime, timedelta
-
+from app import app
+from urllib.parse import urlparse
 import stripe
 
 app = Flask(__name__)
@@ -71,25 +72,41 @@ app.config['MAIL_PASSWORD'] = 'ueimkbvarolxvuio'  # Replace with your App Passwo
 mail=Mail(app)
 
 app.secret_key = 'your secret key'
-
 try:
     def get_db_connection():
-        conn = mysql.connector.connect(
-        host='localhost',
-        user="root",
-        password='Harini_royal@2',
-        database='car_sharing'
-            )
-        # cursor = conn.cursor()
+        # Option 1: Use individual environment variables
+        db_config = {
+            'host': os.getenv('gondola.proxy.rlwy.net'),
+            'port': os.getenv('3306'),
+            'user': os.getenv('root'),
+            'password': os.getenv('zYXDJMrfYGjWEZhBUfcroeSSrYBKthyA'),
+            'database': os.getenv('railway')
+        }
+
+        # Option 2: Use MYSQL_URL (uncomment if preferred)
+        """
+        mysql_url = os.getenv('MYSQL_URL')
+        url = urlparse(mysql_url)
+        db_config = {
+            'host': url.hostname,
+            'port': url.port,
+            'user': url.username,
+            'password': url.password,
+            'database': url.path.lstrip('/')
+        }
+        """
+
+        conn = mysql.connector.connect(**db_config)
         return conn
-    conn=get_db_connection()
+
+    conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     print("Connected to MySQL database!")
     print("--------------------------------------------------------------")
     print(conn)
- 
+
 except mysql.connector.Error as e:
-    print("Error connecting to MySQL database:", e) 
+    print("Error connecting to MySQL database:", e)
 
 ITEMS_PER_PAGE =2
 
