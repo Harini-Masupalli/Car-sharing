@@ -72,20 +72,37 @@ app.config['MAIL_PASSWORD'] = 'ueimkbvarolxvuio'  # Replace with your App Passwo
 mail=Mail(app)
 
 app.secret_key = 'your secret key'
+
+
+
 try:
     def get_db_connection():
-        # Option 1: Use individual environment variables
+        # Option 1: Use individual environment variables (connection dictionary)
         db_config = {
-            'host': os.getenv('gondola.proxy.rlwy.net'),
-            'port': os.getenv('3306'),
-            'user': os.getenv('root'),
-            'password': os.getenv('zYXDJMrfYGjWEZhBUfcroeSSrYBKthyA'),
-            'database': os.getenv('railway')
+            'host': os.getenv('MYSQLHOST', 'gondola.proxy.rlwy.net'),
+            'port': os.getenv('MYSQLPORT', '23413'),
+            'user': os.getenv('MYSQLUSER', 'root'),
+            'password': os.getenv('MYSQLPASSWORD', 'zYXDJMrfYGjWEZhBUfcroeSSrYBKthyA'),
+            'database': os.getenv('MYSQLDATABASE', 'railway')
         }
+
+        # Validate required variables
+        required_vars = ['host', 'user', 'password', 'database']
+        missing_vars = [key for key, value in db_config.items() if value is None and key in required_vars]
+        if missing_vars:
+            raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
+
+        # Convert port to integer
+        try:
+            db_config['port'] = int(db_config['port'])
+        except (TypeError, ValueError):
+            raise ValueError("Invalid or missing MYSQLPORT environment variable")
 
         # Option 2: Use MYSQL_URL (uncomment if preferred)
         """
-        mysql_url = os.getenv('MYSQL_URL')
+        mysql_url = os.getenv('MYSQL_URL', 'mysql://root:zYXDJMrfYGjWEZhBUfcroeSSrYBKthyA@gondola.proxy.rlwy.net:23413/railway')
+        if not mysql_url:
+            raise ValueError("Missing MYSQL_URL environment variable")
         url = urlparse(mysql_url)
         db_config = {
             'host': url.hostname,
@@ -107,6 +124,8 @@ try:
 
 except mysql.connector.Error as e:
     print("Error connecting to MySQL database:", e)
+except ValueError as e:
+    print("Configuration error:", e)
 
 ITEMS_PER_PAGE =2
 
