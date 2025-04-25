@@ -11,7 +11,7 @@ from math import ceil
 import random
 from decimal import Decimal
 from datetime import datetime, timedelta
-from app import app
+# from app import app
 from urllib.parse import urlparse
 import stripe
 
