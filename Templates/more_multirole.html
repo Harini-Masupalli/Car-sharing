@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Multi Role System{% endblock %}
+
+{% block content %}
+<section class="container my-5">
+  <h2 class="text-center">Multi Role System</h2>
+  <p>
+    The CarShare platform offers a multi-role system, ensuring that every type of user can interact with the platform based on their needs. Whether you're a car owner, a renter, or an administrator, each user role is designed to provide the appropriate features and access.
+  </p>
+  <p>
+    Car owners can list their vehicles, set rental prices, and manage bookings through the platform. 
+    Renters can browse through the available cars, select the one that suits their needs, and book it for the desired period. 
+    Administrators oversee the entire platform, ensuring smooth operations and providing user support when needed.
+</p>
+
+  <p>
+    This multi-role approach ensures a seamless experience for everyone involved, enhancing the overall efficiency of the platform.
+  </p>
+  <img src="{{ url_for('static', filename='Uploads/cars.png') }}" alt="Car Image">
+
+</section>
+{% endblock %}

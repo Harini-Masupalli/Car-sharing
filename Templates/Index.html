@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+
+<!-- Carousel -->
+<div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    <!-- First Slide -->
+    <div class="carousel-item active">
+      <img src="{{ url_for('static', filename='uploads/two1.webp') }}" class="d-block w-100" alt="Car 1" style="height: 500px">
+      <div class="carousel-caption d-none d-md-block" style="background-color: rgba(0, 0, 0, 0.5); padding: 20px; border-radius: 10px;">
+        <h1 class="text-white">Welcome to HITA</h1>
+        <p class="text-white">A car sharing, hire car, or car hire agency is a company that rents automobiles for short periods of time, generally ranging from a few hours to a few weeks.</p>
+        <a href="{{ url_for('car_sharing') }}" class="btn btn-danger">Read More</a>
+      </div>
+    </div>
+
+    <!-- Second Slide -->
+    <div class="carousel-item">
+      <img src="{{ url_for('static', filename='uploads/booking.png') }}" class="d-block w-100" alt="Car 2" style="height: 500px">
+      <div class="carousel-caption d-none d-md-block" style="background-color: rgba(0, 0, 0, 0.5); padding: 20px; border-radius: 10px;">
+        <h1 class="text-white">User Management System</h1>
+        <p class="text-white">Select from a variety of vehicles for your needs.</p>
+        <a href="{{ url_for('user_registration') }}" class="btn btn-danger">Read More</a>
+      </div>
+    </div>
+
+    <!-- Third Slide -->
+    <div class="carousel-item">
+      <img src="{{ url_for('static', filename='uploads/cars.png') }}" class="d-block w-100" alt="Car 3" style="height: 500px">
+      <div class="carousel-caption d-none d-md-block" style="background-color: rgba(0, 0, 0, 0.5); padding: 20px; border-radius: 10px;">
+        <h5 class="text-white">Car Registration and Hiring</h5>
+        <p class="text-white">Get a car with ease and at a great price!</p>
+        <a href="{{ url_for('multi_role') }}" class="btn btn-danger">Read More</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carousel Controls -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+<br>  
+<hr>
+
+<!-- Icons and Content Section After Carousel -->
+<section class="features py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold">Our Features</h2>
+      <p class="text-muted">Explore the amazing features of our car-sharing platform.</p>
+    </div>
+    <div class="row text-center">
+      <!-- Feature 1 -->
+      <div class="col-md-4 mb-4">
+        <div class="feature-box p-4 shadow-lg rounded" style="transition: transform 0.3s ease, box-shadow 0.3s ease;">
+          <div class="icon mb-3 text-danger">
+            <i class="fas fa-car fa-2x"></i>
+          </div>
+          <h5 class="fw-bold">Car Sharing System</h5>
+          <p>HITA offers an easy and sustainable solution for people in need of a car for short-term use. Our car-sharing system connects car owners with users, providing an affordable, eco-friendly, and flexible transportation option.</p>
+          <a href="{{ url_for('car_sharing') }}" class="btn btn-outline-danger mt-3">Learn More</a>
+        </div>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="col-md-4 mb-4">
+        <div class="feature-box p-4 shadow-lg rounded" style="transition: transform 0.3s ease, box-shadow 0.3s ease;">
+          <div class="icon mb-3 text-danger">
+            <i class="fas fa-user-plus fa-2x"></i>
+          </div>
+          <h5 class="fw-bold">User Registration System</h5>
+          <p>Sign up quickly to start accessing a wide range of vehicles. Our user registration system is designed to be fast, secure, and efficient, making it easy for you to start renting cars for various time periods, whether it's a few hours, days, or even weeks.</p>
+          <a href="{{ url_for('user_registration') }}" class="btn btn-outline-danger mt-3">Learn More</a>
+        </div>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="col-md-4 mb-4">
+        <div class="feature-box p-4 shadow-lg rounded" style="transition: transform 0.3s ease, box-shadow 0.3s ease;">
+          <div class="icon mb-3 text-danger">
+            <i class="fas fa-tasks fa-2x"></i>
+          </div>
+          <h5 class="fw-bold">Multi Role System</h5>
+          <p>Our platform supports a multi-role system, catering to different user types, including car owners, drivers, and administrators. Whether you're looking to rent a vehicle or list your own, our system offers flexibility and ease of use for all users.</p>
+          <a href="{{ url_for('multi_role') }}" class="btn btn-outline-danger mt-3">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About Us Section -->
+<section class="about-us py-5 bg-light">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold">ABOUT US</h2>
+      <p class="text-muted">Learn more about our mission, vision, and commitment to customer satisfaction. Our commitment to sustainability and customer satisfaction sets us apart in the industry.</p>
+    </div>
+    <div class="row align-items-center">
+      <div class="col-md-6">
+        <h3 class="fw-bold">Our Vision</h3>
+        <p>We aim to provide a hassle-free car-sharing experience for our customers, offering a variety of vehicles for every need. Our commitment to sustainability and customer satisfaction sets us apart in the industry.</p>
+        <a href="{{ url_for('about') }}" class="btn btn-danger">Learn More</a>
+      </div>
+      <div class="col-md-6">
+        <img src="{{ url_for('static', filename='uploads/about.jpg') }}" alt="About Us" class="img-fluid rounded shadow">
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+{#<div class="row container m-5" style="border:2px solid black">
+  <div class="col-md-7" style="border:2px solid black;padding-left: 90px;">
+    <img src="{{ url_for('static', filename='images/drive_when_u_want.jpg') }}" alt="" class="img-fluid rounded shadow">
+  </div>
+  <div class="col-md-5 container" style="border:2px solid black">
+    <div style="font-size: 60px;width: 90%;font-weight: bolder;">Drive When you Want, Make what you need </div>
+    <div style="width: 70%;font-size: 16px;margin: 15px;">Make money on your shedule with deliveries or ride- or both. You can use your own car or choose a rental through HITA</div>
+    <br>
+    <div class="row container ">
+     <div class="col-md-4">
+      <button class="btn btn-dark">Get Started </button>
+     </div>
+     <div class="col-md-8" >
+      
+     <a href="#"> Already have an account? Sign in</a>
+     </div>
+    </div>
+  </div>
+</div>#}
+
+
+{#<div class="row container">
+  <div class="col-md-6">
+      <img src="https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_576,w_576/v1696243819/assets/18/34e6fd-33e3-4c95-ad7a-f484a8c812d7/original/fleet-management.jpg" height="500px" width="500px" alt="">
+  </div>
+  <div class="col-md-6" style="margin-top: 180px;border:2px solid black;">
+      <p style="font-size: 35px;font-size:bolder;font-weight: bolder;">Make Money by renting out<br> your car</p>
+      <p>Connect with thousands of drivers and earn more per week<br> with HATA  free fleet managment </p>
+      <button class="btn btn-dark" style="padding:15px;padding-left: 25px;padding-right: 25px;">Get Started </button>
+  </div>
+</div>#}
+
+<br>
+
+<!-- Car Cards Section -->
+
+<div class="row container mx-auto">
+  {% for car in cars %}
+  <div class="col-md-4 mb-4">
+    <div class="card shadow position-relative">
+      <!-- Car Image -->
+      <img src="{{ url_for('static', filename='uploads/' + car.car_img) }}" class="card-img-top" alt="{{ car.car_name }}" style="height: 300px;" >
+      
+      <!-- Price tag positioned at the top-right corner of the card -->
+      <div class="price-tag position-absolute top-0 end-0 m-3 p-2 bg-danger text-white rounded">
+        ₹{{ car.price_per_day }} <small>/ day</small>
+      </div>
+
+      <div class="card-body" style="height: 230px !important;">
+        <h5 class="card-title">{{ car.car_name }}</h5>
+        <p class="card-text">Type: {{ car.type_name }}</p>
+        <p class="card-text">Company: {{ car.company_name }}</p>
+        <p class="card-text">Owner: {#{ car.owner_name }}</p>
+        <p class="card-text">Stock: {{ car.stock }#} available</p>
+        
+        <!-- Check if user is logged in -->
+        {% if session.get('role')=='Admin' or session.get('role')=='User' %}
+          <a href="{{ url_for('booking', car_number=car['car_number']) }}" class="btn btn-success">Book Now</a>
+        {% else %}
+          <a href="{{ url_for('login') }}" class="btn btn-danger">Login to Book Now</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Pagination Controls -->
+{#<nav>
+  <ul class="pagination justify-content-center">
+    {% if current_page > 1 %}
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('cars', page=1) }}">First</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('cars', page=current_page - 1) }}">Previous</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" href="#">First</a>
+      </li>
+      <li class="page-item disabled">
+        <a class="page-link" href="#">Previous</a>
+      </li>
+    {% endif %}
+
+    {% for p in range(1, total_pages + 1) %}
+      <li class="page-item {% if p == current_page %}active{% endif %}">
+        <a class="page-link" href="{{ url_for('cars', page=p) }}">{{ p }}</a>
+      </li>
+    {% endfor %}
+
+    {% if current_page < total_pages %}
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('cars', page=current_page + 1) }}">Next</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('cars', page=total_pages) }}">Last</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" href="#">Next</a>
+      </li>
+      <li class="page-item disabled">
+        <a class="page-link" href="#">Last</a>
+      </li>
+    {% endif %}
+  </ul>
+</nav>
+</section>#}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Price tag positioned at the top-right corner of the card */
+.price-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  background-color: red;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.price-tag small {
+  font-size: 12px;
+}
+
+/* Flash message container */
+.alert-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1050;
+  width: 90%;
+  max-width: 600px;
+}
+
+.alert .btn-close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+</style>
+
+{% endblock %}

@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}Book Your Car{% endblock %}
+
+{% block content %}
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+    {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+{% endwith %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10 col-sm-12">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white text-center">
+                    <h3>Search your car</h3>
+                </div>
+                <div class="card-body">
+                    <form id="car-search-form" method="POST" action="{{ url_for('book_ur_car') }}">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <select class="form-control" id="From_Location" name="From_Location">
+                                    <option value="">Select From Location</option>
+                                    {% for location in from_locations %}
+                                    <option value="{{ location }}">{{ location }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="error-message text-danger" id="from-location-error"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-control" id="To_Location" name="To_Location">
+                                    <option value="">Select To Location</option>
+                                    {% for location in to_locations %}
+                                    <option value="{{ location }}">{{ location }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="error-message text-danger" id="to-location-error"></div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <input type="date" class="form-control" id="from_date" name="from_date">
+                                <div class="error-message text-danger" id="from-date-error"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="date" class="form-control" id="to_date" name="to_date">
+                                <div class="error-message text-danger" id="to-date-error"></div>
+                            </div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger" >Search Cars</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <!-- Display Car Results -->
+    <div id="car-results" class="mt-4">
+        {% if cars is not none %}
+            {% if cars %}
+            <h4 style="text-align: center;"> Available Cars</h4>
+                <div class="row">
+                    {% for car in cars %}
+                        <div class="col-md-4 col-sm-6 mb-4">
+                            <div class="card position-relative shadow">
+                                <!-- Car Price Tag -->
+                                <span class="badge bg-danger text-white position-absolute top-0 end-0 m-2 px-4 py-2" style="font-size: 1em;">₹{{ car.price_per_day }}/day</span>
+                                
+                                <!-- Car Image -->
+                                <img src="{{ url_for('static', filename='uploads/' + car.car_img) }}" class="card-img-top" alt="{{ car.car_name }}" style="height: 180px; object-fit: cover;">
+
+                                <div class="card-body">
+                                  <h5 class="card-title">{{ car.car_name }}</h5>
+                                  <p class="card-text">Type: {{ car.type_name }}</p>
+                                  <p class="card-text">Company: {{ car.company_name }}</p>
+                                  <p class="card-text">Owner: {{ car.owner_name }}</p>
+                                  <p class="card-text">Price: ₹{{ car.price_per_day }} /day</p>
+                                  <p class="card-text">Stock: {{ car.stock }} available</p>
+                              </div>
+                              <div class="card-footer">                  
+
+                                    <!-- Booking Button -->
+                                    {% if user_id %}
+                                    <a href="{{ url_for('booking', car_number=car.car_number) }}" class="btn btn-success w-100">Book Now</a>
+                                    {% else %}
+                                    <a href="{{ url_for('login') }}" class="btn btn-danger w-100">Login to Book</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-danger font-weight-bold text-center">No cars available for the selected dates and locations.</p>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // Get form and input fields
+        const form = document.getElementById('car-search-form');
+        const fromLocation = document.getElementById('From_Location');
+        const toLocation = document.getElementById('To_Location');
+        const fromDate = document.getElementById('from_date');
+        const toDate = document.getElementById('to_date');
+
+        // Get error message elements
+        const fromLocationError = document.getElementById('from-location-error');
+        const toLocationError = document.getElementById('to-location-error');
+        const fromDateError = document.getElementById('from-date-error');
+        const toDateError = document.getElementById('to-date-error');
+
+        // Form validation on submit
+        form.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent default submission
+
+            // Clear previous error messages
+            fromLocationError.textContent = "";
+            toLocationError.textContent = "";
+            fromDateError.textContent = "";
+            toDateError.textContent = "";
+
+            let valid = true;
+
+            // Validate From Location
+            if (!fromLocation.value.trim()) {
+                fromLocationError.textContent = "From location is required!";
+                valid = false;
+            }
+
+            // Validate To Location
+            if (!toLocation.value.trim()) {
+                toLocationError.textContent = "To location is required!";
+                valid = false;
+            }
+
+            // Prevent selecting the same locations
+            if (fromLocation.value.trim() && toLocation.value.trim() && fromLocation.value === toLocation.value) {
+                toLocationError.textContent = "From and To locations cannot be the same!";
+                valid = false;
+            }
+
+            // Validate From Date
+            if (!fromDate.value) {
+                fromDateError.textContent = "From date is required!";
+                valid = false;
+            }
+
+            // Validate To Date
+            if (!toDate.value) {
+                toDateError.textContent = "To date is required!";
+                valid = false;
+            }
+
+            // Ensure To Date is after From Date
+            if (fromDate.value && toDate.value && new Date(toDate.value) < new Date(fromDate.value)) {
+                toDateError.textContent = "To date cannot be earlier than From date!";
+                valid = false;
+            }
+
+            // If all fields are valid, submit the form
+            if (valid) {
+                form.submit();
+            }
+        });
+
+        // Clear error messages as the user starts typing
+        fromLocation.addEventListener('input', () => fromLocationError.textContent = "");
+        toLocation.addEventListener('input', () => toLocationError.textContent = "");
+        fromDate.addEventListener('input', () => fromDateError.textContent = "");
+        toDate.addEventListener('input', () => toDateError.textContent = "");
+    });
+</script>
+
+{% endblock %}

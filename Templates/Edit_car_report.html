@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Car{% endblock %}
+
+{% block content %}
+
+
+<div class="container mt-5">
+    <h1 style="text-align: center;">Edit Car Details</h1>
+    
+
+    <form method="POST" enctype="multipart/form-data" id="edit-car-form" class="w-50 mx-auto">
+        <div class="form-group">
+            <label for="car_name">Car Name</label>
+            <input type="text" class="form-control form-control" id="car_name" name="car_name" value="{{ car.car_name }}">
+            <div class="invalid-feedback" id="car_name-error">Car name is required.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="stock">Stock</label>
+            <input type="number" class="form-control form-control" id="stock" name="stock" value="{{ car.stock }}">
+            <div class="invalid-feedback" id="stock-error">Stock is required and must be a positive number.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="price_per_day">Price per Day</label>
+            <input type="number" class="form-control form-control" id="price_per_day" name="price_per_day" value="{{ car.price_per_day }}">
+            <div class="invalid-feedback" id="price_per_day-error">Price per day is required and must be a positive number.</div>
+        </div>
+
+        <!-- Upload New Car Image -->
+        <div class="form-group">
+            <label for="car_img">Upload New Car Image (Optional)</label>
+            <input type="file" class="form-control form-control" id="car_img" name="car_img" onchange="previewImage(event)">
+            <small class="form-text text-muted">Leave this blank if you don't want to change the current image.</small>
+            <div class="invalid-feedback" id="car_img-error">Please upload a valid image file (JPG, JPEG, PNG, GIF, WebP).</div>
+        </div>
+        <br>
+
+        <!-- Current Car Image Preview -->
+        <div class="form-group">
+            <label for="current_car_img">Current Car Image</label>
+            <div>
+                <img src="/static/uploads/{{ car.car_img }}" alt="Car Image" style="width: 150px; height: 100px;">
+            </div>
+            <div>
+                <label><strong>Current Image Filename:</strong> {{ car.car_img }}</label>
+            </div>
+        </div>
+        <br>
+
+        <button type="submit" class="btn btn-primary btn-group-sm">Save Changes</button>
+    </form>
+</div>
+<br>
+
+<script>
+    // Show image preview when a user selects a file
+    function previewImage(event) {
+        const file = event.target.files[0];
+        const previewContainer = document.getElementById('image-preview-container');
+        const previewImage = document.getElementById('image-preview');
+        const imageName = document.getElementById('image-name');
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function () {
+                previewImage.src = reader.result;
+                imageName.textContent = file.name;
+                previewContainer.style.display = 'block';  // Show preview container
+            };
+
+            reader.readAsDataURL(file);
+        } else {
+            previewContainer.style.display = 'none';  // Hide preview container if no file is selected
+        }
+    }
+
+    // Basic form validation
+    document.getElementById('edit-car-form').addEventListener('submit', function(event) {
+        let isValid = true;
+
+        // Clear previous error messages
+        document.querySelectorAll('.invalid-feedback').forEach(function(element) {
+            element.style.display = 'none';
+        });
+
+        // Validate Car Name
+        const carName = document.getElementById('car_name');
+        if (!carName.value.trim()) {
+            document.getElementById('car_name-error').style.display = 'block';
+            isValid = false;
+        }
+
+        // Validate Stock
+        const stock = document.getElementById('stock');
+        if (!stock.value.trim() || stock.value <= 0) {
+            document.getElementById('stock-error').style.display = 'block';
+            isValid = false;
+        }
+
+        // Validate Price per Day
+        const pricePerDay = document.getElementById('price_per_day');
+        if (!pricePerDay.value.trim() || pricePerDay.value <= 0) {
+            document.getElementById('price_per_day-error').style.display = 'block';
+            isValid = false;
+        }
+
+        // Validate Car Image (Optional)
+        const carImg = document.getElementById('car_img');
+        if (carImg.files.length > 0) {
+            const file = carImg.files[0];
+            const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            if (!validImageTypes.includes(file.type)) {
+                document.getElementById('car_img-error').style.display = 'block';
+                isValid = false;
+            }
+        }
+
+        // If the form is invalid, prevent submission
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
+</script>
+{% endblock %}

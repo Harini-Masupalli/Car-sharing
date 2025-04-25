@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Car Sharing{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">    
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body class="container-fluid">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Car Sharing</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <!-- Common Links -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('about') }}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('book_ur_car') }}">Book Your car</a>
+                    </li>
+
+                    <!-- Links for users who are not logged in -->
+                    {#% if session.get('role') or session.get('role')=='user' %#}
+                  
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('cars') }}">Cars</a>
+                    </li>
+
+                    <!-- Links for 'user' role after login -->
+                    {% if session.get('role') == 'User' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('user_dashboard') }}">Dashboard</a>
+                    </li>
+                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Administration
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
+                            <li><a class="dropdown-item" href="/add_car">Add New Car</a></li>
+                            <li><a class="dropdown-item" href="/car_reports">My Car Report</a></li>
+                            <li><a class="dropdown-item" href="/booking_report">My Bookings</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {#% endif %#}
+                    
+                    
+
+                    <!-- Links for 'admin' role after login -->
+                   
+                    {% if session.get('role') == 'Admin' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Administration
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
+                            <li><a class="dropdown-item" href="{{ url_for('add_car') }}">Add New Car</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('Add_type') }}">Add New Car Type</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('add_company') }}">Add New Car Company</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('car_report') }}">Car Report</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('company_report') }}">Company Report</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('customer_report') }}">Customer Report</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('car_types_report') }}">Car Type Reports</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('booking_report') }}">Booking Reports</a></li>
+                        </ul>
+                    </li>
+                    
+                    {% endif %}
+                    {% if not session.get('role') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('contact') }}">Contact Us</a>
+                    </li>
+
+                    {% else %}
+                    <!-- Account links visible after login -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAccount" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {#My Account#}
+                        {{session.get('username')}}
+                        </a>
+
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownAccount">
+                            <li><a class="dropdown-item" href="{{ url_for('Account') }}">Account</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('change_password') }}">Change Password</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+        
+
+        {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    <footer class="bg-light text-dark mt-5">
+        <div class="container py-4">
+            <div class="row">
+                <div class="col-md-4 ">
+                    <h5>Browse Page</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('index') }}" class="text-dark">Home Page</a></li>
+                        <li><a href="{{ url_for('about') }}" class="text-dark">About</a></li>
+                        <li><a href="{{ url_for('login') }}" class="text-dark">Login</a></li>
+                        <li><a href="{{ url_for('contact') }}" class="text-dark">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Modules of Project</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('car_sharing') }}" class="text-dark">Car Sharing Management System</a></li>
+                        <li><a href="{{ url_for('user_registration') }}" class="text-dark">User Registration System</a></li>
+                        <li><a href="{{ url_for('multi_role') }}" class="text-dark">Multi Role System</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Car Sharing</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-dark">Registered company name, Inc</a></li>
+                        <li><a href="#" class="text-dark">5-679, High School Veedhi</a></li>
+                        <li><a href="#" class="text-dark">Puttaparthi - 515133</a></li>
+                        <li><a href="#" class="text-dark">Andhra Pradesh</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="bg-black text-center text-white py-3">
+            <p class="mb-0">&copy; 2025 Car Sharing. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Book Your Car{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3>Car Booking</h3>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+    <div class="card shadow">
+        <div class="row no-gutters">
+            <div class="col-md-4 position-relative">
+                <img src="/static/uploads/{{ car.car_img }}" class="card-img" alt="{{ car.car_name }}">
+                <div class="price-tag position-absolute top-0 end-0 m-3 p-2 bg-danger text-white rounded">
+                    ${{ car.price_per_day }} / day
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{ car.car_name }}</h5>
+                    <p class="card-text">From: {{ car.from_location }}</p>
+                    <p class="card-text">To: {{ car.to_location }}</p>
+                    <p class="card-text"><small class="text-muted">Available for your selected dates</small></p>
+
+                    <!-- Booking form -->
+                    <form id="bookingForm" action="{{ url_for('booking', car_number=car.car_number) }}" method="POST" class="form-small">
+                        <div class="form-group">
+                            <label for="pickup_date">Pickup Date:</label>
+                            <input type="date" class="form-control" id="pickup_date" name="pickup_date">
+                            <small id="pickupDateError" class="form-text text-danger" style="display: none;">Pickup date cannot be empty.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="dropoff_date">Dropoff Date:</label>
+                            <input type="date" class="form-control" id="dropoff_date" name="dropoff_date">
+                            <small id="dropoffDateError" class="form-text text-danger" style="display: none;">Dropoff date cannot be empty or earlier than pickup date.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="pickup_address">Pickup Address:</label>
+                            <input type="text" class="form-control" id="pickup_address" name="pickup_address">
+                            <small id="pickupAddressError" class="form-text text-danger" style="display: none;">Pickup address cannot be empty.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="dropoff_address">Dropoff Address:</label>
+                            <input type="text" class="form-control" id="dropoff_address" name="dropoff_address">
+                            <small id="dropoffAddressError" class="form-text text-danger" style="display: none;">Dropoff address cannot be empty.</small>
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-danger">Confirm Booking</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('bookingForm').addEventListener('submit', function(event) {
+        var isValid = true;
+        
+        // Get values of pickup and dropoff dates
+        var pickupDate = document.getElementById('pickup_date').value;
+        var dropoffDate = document.getElementById('dropoff_date').value;
+        var pickupAddress = document.getElementById('pickup_address').value;
+        var dropoffAddress = document.getElementById('dropoff_address').value;
+
+        // Reset error messages
+        document.getElementById('pickupDateError').style.display = 'none';
+        document.getElementById('dropoffDateError').style.display = 'none';
+        document.getElementById('pickupAddressError').style.display = 'none';
+        document.getElementById('dropoffAddressError').style.display = 'none';
+
+        // Validate pickup date
+        if (!pickupDate) {
+            document.getElementById('pickupDateError').style.display = 'block';
+            isValid = false;
+        }
+        
+        // Validate dropoff date
+        if (!dropoffDate) {
+            document.getElementById('dropoffDateError').innerText = 'Dropoff date cannot be empty.';
+            document.getElementById('dropoffDateError').style.display = 'block';
+            isValid = false;
+        } else if (new Date(dropoffDate) < new Date(pickupDate)) {
+            document.getElementById('dropoffDateError').innerText = 'Dropoff date cannot be earlier than pickup date.';
+            document.getElementById('dropoffDateError').style.display = 'block';
+            isValid = false;
+        }
+
+        // Validate pickup address
+        if (!pickupAddress) {
+            document.getElementById('pickupAddressError').style.display = 'block';
+            isValid = false;
+        }
+
+        // Validate dropoff address
+        if (!dropoffAddress) {
+            document.getElementById('dropoffAddressError').style.display = 'block';
+            isValid = false;
+        }
+
+        // If form is invalid, prevent submission
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
+</script>
+
+{% endblock %}
+
+<style>
+    /* Styling to reduce form size */
+    .form-small .form-group {
+        max-width: 400px;
+        margin-bottom: 1rem;
+    }
+
+    .form-small input[type="date"], 
+    .form-small input[type="text"] {
+        max-width: 100%;
+    }
+
+    /* Price tag styles */
+    .price-tag {
+        font-size: 1.2rem;
+        font-weight: bold;
+        background-color: #e63946;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+</style>

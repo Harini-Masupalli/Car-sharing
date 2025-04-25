@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Add Car Type{% endblock %}
+
+{% block content %}
+<style>
+    .description-textarea {
+        resize: none;
+    }
+    .invalid-feedback {
+        display: none;
+        color: red;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10 col-sm-12">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white text-center">
+                    <h3>Car Type</h3>
+                </div>
+                <!-- Flash Message -->
+                <!-- <div id="flashMessage" class="flash-message"></div> -->
+                 <!-- Flash message -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="alert-list">
+                    {% for category, message in messages %}
+                        <li class="alert alert-{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+                <div class="card-body">
+                    <form id="addCarTypeForm" action="{{ url_for('add_car_type') }}" method="POST" enctype="multipart/form-data">
+                        <!-- Car Type Field -->
+                        <div class="mb-3">
+                            <label for="carType" class="form-label">Type</label>
+                            <input type="text" class="form-control" id="carType" name="carType" placeholder="Enter car type (e.g., Sedan, SUV)">
+                            <div class="invalid-feedback" id="carTypeError">Please enter a valid car type.</div>
+                        </div>
+
+                        <!-- Description of Type Field -->
+                        <div class="mb-3">
+                            <label for="typeDescription" class="form-label">Description of Type</label>
+                            <textarea class="form-control description-textarea" id="typeDescription" name="typeDescription" rows="5" placeholder="Enter a description of the car type"></textarea>
+                            <div class="invalid-feedback" id="typeDescriptionError">Please enter a valid description.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="company_image" class="form-label"> Image</label>
+                            <input type="file" class="form-control" id="company_image" name="company_image" accept=".png, .jpg, .jpeg, .gif, .webp">
+                            <div class="invalid-feedback" id="company_image_error">Please upload a company image.</div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-4" style="width: 30%; margin: auto;">
+                            <button type="submit" class="btn btn-danger">Submit</button>
+                            <button type="reset" class="btn btn-primary">Reset</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+
+<script>
+    // Validation on form submission
+    document.getElementById('addCarTypeForm').addEventListener('submit', function(event) {
+        let isValid = true;
+
+        // Validate each required field
+        const carType = document.getElementById('carType');
+        const typeDescription = document.getElementById('typeDescription');
+        const companyImage = document.getElementById('company_image');
+
+        // Clear previous errors
+        clearErrors();
+
+        // Check Car Type
+        if (!carType.value.trim()) {
+            showError(carType, "carTypeError");
+            isValid = false;
+        }
+
+        // Check Type Description
+        if (!typeDescription.value.trim()) {
+            showError(typeDescription, "typeDescriptionError");
+            isValid = false;
+        }
+
+        // Check Company Image
+        if (!companyImage.value) {
+            showError(companyImage, "company_image_error");
+            isValid = false;
+        }
+
+        // If any validation fails, prevent form submission
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
+
+    // Show error message
+    function showError(inputElement, errorId) {
+        inputElement.classList.add('is-invalid');
+        document.getElementById(errorId).style.display = 'block';
+    }
+
+    // Clear error messages
+    function clearErrors() {
+        const invalidFields = document.querySelectorAll('.is-invalid');
+        invalidFields.forEach(field => field.classList.remove('is-invalid'));
+        
+        const errorMessages = document.querySelectorAll('.invalid-feedback');
+        errorMessages.forEach(msg => msg.style.display = 'none');
+    }
+
+    // Event listener to hide error messages when the user starts typing
+    document.querySelectorAll('input, select, textarea').forEach(field => {
+        field.addEventListener('input', function() {
+            this.classList.remove('is-invalid');
+            const errorMessage = document.getElementById(this.id + "_error");
+            if (errorMessage) {
+                errorMessage.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+{% endblock %}

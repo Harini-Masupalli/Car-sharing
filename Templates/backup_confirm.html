@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Booking Confirmation{% endblock %}
+
+{% block content %}
+<!-- Container to center the card and modal -->
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <!-- Booking Confirmation Card -->
+    <div class="card shadow-lg rounded" style="width: 100%; max-width: 600px;">
+        <div class="card-body">
+            <!-- Card Title -->
+            <h5 class="card-title text-center mb-4" style="font-size: 24px; font-weight: 600; color: #333;">Booking Confirmation</h5>
+
+            <!-- Booking Details -->
+            <div class="mb-3">
+                <h6 class="card-subtitle mb-2 text-muted">{{ booking.car_name }}</h6>
+                <p class="card-text">Pickup Date: <strong>{{ booking.pickup_date }}</strong></p>
+                <p class="card-text">Dropoff Date: <strong>{{ booking.dropoff_date }}</strong></p>
+                <p class="card-text">Pickup Address: <strong>{{ booking.pickup_address }}</strong></p>
+                <p class="card-text">Dropoff Address: <strong>{{ booking.dropoff_address }}</strong></p>
+                <p class="card-text"><small class="text-muted">Booking ID: <strong>{{ booking.booking_id }}</strong></small></p>
+            </div>
+
+            <!-- Button to open the modal with more details -->
+            <div class="text-center mt-4">
+                <button class="btn btn-info btn-lg" data-bs-toggle="modal" data-bs-target="#bookingDetailsModal{{ booking.booking_id }}">
+                    View More Details
+                </button>
+            </div>
+
+            <!-- Payment Button -->
+            <div class="text-center mt-4">
+                <form action="{{ url_for('create_checkout_session') }}" method="POST">
+                    <input type="hidden" name="booking_id" value="{{ booking.booking_id }}">
+                    <button type="submit" class="btn btn-primary btn-lg">Pay Now</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Booking Details -->
+<div class="modal fade" id="bookingDetailsModal{{ booking.booking_id }}" tabindex="-1" aria-labelledby="bookingDetailsModalLabel{{ booking.booking_id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bookingDetailsModalLabel{{ booking.booking_id }}">Booking Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Customer Name:</strong> {{ booking.username }}</p>
+                <p><strong>Customer Email:</strong> {{ booking.email }}</p>
+                <p><strong>Customer Contact:</strong> {{ booking.phone_number }}</p>
+                <p><strong>Car Name:</strong> {{ booking.car_name }}</p>
+                <p><strong>Price per Day:</strong> RS.{{ booking.price_per_day }}</p>
+                <p><strong>Pickup Date:</strong> {{ booking.pickup_date }}</p>
+                <p><strong>Dropoff Date:</strong> {{ booking.dropoff_date }}</p>
+                <p><strong>Pickup Address:</strong> {{ booking.pickup_address }}</p>
+                <p><strong>Dropoff Address:</strong> {{ booking.dropoff_address }}</p>
+
+                <div><strong>Car Image:</strong><br>
+                    {% if booking.car_img %}
+                        <img src="/static/uploads/{{ booking.car_img }}" alt="Car Image" class="img-fluid" style="max-width: 100%; height: auto;">
+                    {% else %}
+                        <p>No image available</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Example payment button action, integrate this with the chosen payment gateway (like Stripe or PayPal)
+    document.getElementById("payment-button").addEventListener("click", function() {
+        alert("Payment gateway integration is not set up yet.");
+        // Here you would redirect or open a payment modal to process payment
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

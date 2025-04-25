@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Booking Report{% endblock %}
+
+{% block content %}
+<style>
+    footer{
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+</style>
+    <div class="container-fluid mt-5">
+        <h1 class="mb-4 text-center">All Booking Report</h1>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% if bookings %}
+        <!-- Make the table scrollable on smaller screens -->
+        <div class="container table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="table thead bg-dark text-white text-center">
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Image</th> <!-- New column for images -->
+                        <th>Customer Name</th>
+                        <th>Customer Email</th>
+                        <th>Customer Contact</th>
+                        <th>Booking Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                        <tr>
+                            <td>{{ booking.booking_id }}</td>
+                            <td>
+                                <!-- Display customer or car image -->
+                                {% if booking.customer_image %}
+                                    <img src="/static/uploads/{{ booking.customer_image }}" alt="Customer Image" class="img-thumbnail" style="max-width: 100px;">
+                                {% elif booking.car_img %}
+                                    <img src="/static/uploads/{{ booking.car_img }}" alt="Car Image" class="img-thumbnail" style="max-width: 100px;">
+                                {% else %}
+                                    <p>No image available</p>
+                                {% endif %}
+                            </td>
+                            <td>{{ booking.username }}</td>
+                            <td>{{ booking.email }}</td>
+                            <td>{{ booking.phone_number }}</td>
+                            <td>{{ booking.created_at }}</td>
+                            <td>
+                                <!-- View Details Button (Triggers Modal) -->
+                                <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#bookingDetailsModal{{ booking.booking_id }}">View</button>
+
+                                <!-- Edit Booking Button -->
+                                <a href="{{ url_for('edit_booking', booking_id=booking.booking_id) }}" class="btn btn-success btn-sm">Edit</a>
+
+                                <!-- Delete Booking Button -->
+                                <form action="{{ url_for('delete_booking', booking_id=booking.booking_id) }}" method="POST" class="d-inline"
+                                      onsubmit="return confirm('Are you sure you want to delete this booking?');">
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+
+                        <!-- Modal for Booking Details -->
+                        <div class="modal fade m-5" id="bookingDetailsModal{{ booking.booking_id }}" tabindex="-1" aria-labelledby="bookingDetailsModalLabel{{ booking.booking_id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content m-5">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="bookingDetailsModalLabel{{ booking.booking_id }}">Booking Details</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><strong>Customer Name:</strong> {{ booking.username }}</p>
+                                        <p><strong>Customer Email:</strong> {{ booking.email }}</p>
+                                        <p><strong>Customer Contact:</strong> {{ booking.phone_number }}</p>
+                                        <p><strong>Car Name:</strong> {{ booking.car_name }}</p>
+                                        <p><strong>Price per Day:</strong> RS.{{ booking.price_per_day }}</p>
+                                        <p><strong>Pickup Date:</strong> {{ booking.pickup_date }}</p>
+                                        <p><strong>Dropoff Date:</strong> {{ booking.dropoff_date }}</p>
+                                        <p><strong>Pickup Address:</strong> {{ booking.pickup_address }}</p>
+                                        <p><strong>Dropoff Address:</strong> {{ booking.dropoff_address }}</p>
+                                        
+                                        <!-- Adding Description Field -->
+                                        {#<p><strong>Description:</strong> {{ booking.description or 'No description available' }}</p>#}
+
+                                        <div><strong>Car Image:</strong><br>
+                                            {% if booking.car_img %}
+                                                <img src="/static/uploads/{{ booking.car_img }}" alt="Car Image" class="img-fluid" style="max-width: 100%; height: auto;">
+                                            {% else %}
+                                                <p>No image available</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Pagination Controls (Only if needed) -->
+            {% if total_pages > 1 %}
+                <div class="d-flex justify-content-center mt-4">
+                    <nav>
+                        <ul class="pagination">
+                            <!-- Previous Button -->
+                            {% if current_page > 1 %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('booking_report', page=current_page - 1) }}">Previous</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">Previous</span>
+                                </li>
+                            {% endif %}
+
+                            <!-- Page Numbers -->
+                            {% for num in range(1, total_pages + 1) %}
+                                {% if num == current_page %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('booking_report', page=num) }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            <!-- Next Button -->
+                            {% if current_page < total_pages %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('booking_report', page=current_page + 1) }}">Next</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">Next</span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            {% endif %}
+
+        {% else %}
+            <!-- No Data Message -->
+            <p class="text-center text-muted">No bookings available.</p>
+
+            <!-- Add Booking Button (visible only when no bookings are available) -->
+            <div class="alert alert-info text-center">
+                <p>Please add a booking to get started.</p>
+                <a href="{{ url_for('cars') }}" class="btn btn-primary">Add Booking</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

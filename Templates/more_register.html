@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}User Registration System{% endblock %}
+
+{% block content %}
+<section class="container my-5">
+  <h2 class="text-center">User Registration System</h2>
+  <p>
+    Registering with CarShare is simple and fast. Once you've signed up, you can immediately start browsing and renting vehicles that suit your needs. Whether you're looking for a car for a few hours or a few weeks, our registration process is quick and efficient.
+  </p>
+  <p>
+    We ensure the security and privacy of your data, so you can trust that your information will be handled responsibly. The registration process includes verifying your identity, adding payment details, and ensuring you're eligible to drive.
+  </p>
+  <p>
+    Get started today and unlock a world of car-sharing possibilities!
+  </p>
+
+  <img src="{{ url_for('static', filename='Uploads/booking.png') }}" alt="Car Image" style="width: 800px; height: 300px;">
+</section>
+{% endblock %}

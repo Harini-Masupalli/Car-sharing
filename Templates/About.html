@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+<!-- About Us Section -->
+<section id="about" class="container my-5">
+  <h2 class="text-center">About CarSharing</h2>
+  <div class="row d-flex justify-content-between align-items-center">
+    <div class="col-md-6">
+      <p class="lead">
+       <b><span style="color: red;">H</span>ITA</b> is a premier car-sharing platform that brings together vehicle owners and individuals in need of a car for short-term rentals. Whether you're running errands, planning a road trip, or attending a business meeting, CarShare offers a variety of well-maintained vehicles for your convenience. We aim to provide an eco-friendly and cost-effective transportation solution that benefits both car owners and users.
+      </p>
+      <p class="lead">
+        Our platform ensures a seamless experience with easy booking, real-time vehicle availability, and flexible rental options. CarShare puts safety at the forefront with background checks, vehicle inspections, and insurance coverage, making it a reliable and secure choice for your travel needs.
+      </p>
+    </div>
+    <div class="col-md-6">
+      <img src="{{ url_for('static', filename='uploads/about.jpg') }}" class="img-fluid shadow-lg rounded" alt="Car">
+    </div>
+  </div>
+</section>
+
+<!-- Additional Styles -->
+<style>
+  #about {
+    background-color: #f9f9f9;
+    padding: 40px 0;
+    border-radius: 10px;
+  }
+  #about h2 {
+    font-family: 'Arial', sans-serif;
+    color: #283747;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  #about .lead {
+    color: #4a4c4d;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    padding: 15px;
+  }
+  #about img {
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  .container {
+    max-width: 90%;
+  }
+</style>
+
+{% endblock %}

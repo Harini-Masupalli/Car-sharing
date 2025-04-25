@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HITA - Sharinig Rides, Creating Smiles{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">    
+    <script src="https://js.stripe.com/v3/"></script>
+    <!-- <style>
+        /* Custom Styling */
+        .navbar {
+            background-color: #bf0606;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+
+        .navbar-light .navbar-brand {
+            color: white;
+        }
+
+        .navbar-light .navbar-nav .nav-link {
+            color: white;
+        }
+
+        .navbar-light .navbar-nav .nav-link:hover {
+            color: #d3d3d3;
+        }
+
+        .footer {
+            background-color: #1c1c1c;
+            color: white;
+        }
+
+        .footer a {
+            color: #d3d3d3;
+        }
+
+        .footer a:hover {
+            color: #fff;
+        }
+
+        .footer .text-center {
+            background-color: #333;
+        }
+
+        /* Dark Theme Styling */
+        body.dark-theme {
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        .dark-theme .navbar {
+            background-color: #2d2d2d;
+        }
+
+        .dark-theme .navbar-light .navbar-brand {
+            color: white;
+        }
+
+        .dark-theme .navbar-light .navbar-nav .nav-link {
+            color: white;
+        }
+
+        .dark-theme .footer {
+            background-color: #1c1c1c;
+        }
+
+        .dark-theme .footer a {
+            color: #b3b3b3;
+        }
+
+        .dark-theme .footer a:hover {
+            color: #ffffff;
+        }
+
+        /* Styling for cards */
+        .card {
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .card img {
+            object-fit: cover;
+            height: 200px;
+        }
+
+        /* Light Theme: Red Cards with White Text */
+        .card.bg-danger {
+            background-color: #dc3545; /* Red */
+            color: white;
+        }
+
+        .card.bg-danger .card-body {
+            color: white;
+        }
+
+        /* Dark Theme: Cards with Dark Background and Light Text */
+        .dark-theme .card.bg-danger {
+            background-color: #9c1d1d; /* Darker Red for Dark Theme */
+            color: white;
+        }
+
+        .dark-theme .card.bg-danger .card-body {
+            color: white;
+        }
+
+        .dark-theme .card .price-tag {
+            background-color: #b93b3b; /* Darker red for price tag */
+        }
+    </style> -->
+
+    <style>
+        footer{
+            width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+        }
+    </style>
+</head>
+<body >
+
+    <!-- <div class="cursor" id="cursor"></div>
+    <div class="cursor-large" id="cursor-large"></div> -->
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style=" border-bottom: 3px solid #4CAF50;
+    position: sticky;
+    top:0;
+    left: 0;
+    z-index: 9999;">
+        <div class="container-fluid">
+            <a class="navbar-brand p-2" href="#"><b><span style="color: red;">H</span>ITA -  Sharing Rides, Creating Smiles</a></b>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <!-- Common Links -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('about') }}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('book_ur_car') }}">Book Your Car</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('cars') }}">Cars</a>
+                    </li>
+
+                    <!-- Links for 'user'  after login -->
+                    {% if session.get('role') == 'User' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('user_dashboard') }}">Dashboard</a>
+                    </li>
+                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Administration
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
+                            <li><a class="dropdown-item" href="/add_car">Add New Car</a></li>
+                            <li><a class="dropdown-item" href="/car_reports">My Car Report</a></li>
+                            <li><a class="dropdown-item" href="/booking_report">My Bookings</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+
+                     <!-- Links for 'admin' role after login -->
+                    {% if session.get('role') == 'Admin' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Administration
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
+                            <li><a class="dropdown-item" href="{{ url_for('add_car') }}">Add New Car</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('Add_type') }}">Add New Car Type</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('add_company') }}">Add New Car Company</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('car_report') }}">Car Report</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('company_report') }}">Company Report</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('customer_report') }}">Customer Report</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('car_types_report') }}">Car Type Reports</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('booking_report') }}">Booking Reports</a></li>
+                        </ul>
+                    </li>
+                    
+                    {% endif %}
+
+                    
+
+                    <!-- Account Links after login -->
+                    {% if session.get('role') %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAccount" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ session.get('username') }}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownAccount">
+                            <li><a class="dropdown-item" href="{{ url_for('Account') }}">Account</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('change_password') }}">Change Password</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                        </ul>
+                    </li>
+                    <!-- Light/Dark Theme Toggle Button
+                    <li class="nav-item">
+                        <button class="nav-link btn" id="themeToggle" style="background: none; color: white; border: none;">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li> -->
+                    {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('contact') }}">Contact Us</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    
+    {% block content %}{% endblock %}
+    
+    <!-- Footer -->
+    <footer class="footer py-4 bg-light w-100" >
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Browse Page</h5>
+                    <ul class="list-unstyled" >
+                        <li><a href="{{ url_for('index') }}" class="text-dark">Home Page</a></li>
+                        <li><a href="{{ url_for('about') }}" class="text-dark">About</a></li>
+                        <li><a href="{{ url_for('login') }}" class="text-dark">Login</a></li>
+                        <li><a href="{{ url_for('contact') }}" class="text-dark">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Modules of Project</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('car_sharing') }}" class="text-dark">Car Sharing Management System</a></li>
+                        <li><a href="{{ url_for('user_registration') }}" class="text-dark">User Registration System</a></li>
+                        <li><a href="{{ url_for('multi_role') }}" class="text-dark">Multi Role System</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Car Sharing</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-dark">Registered company name, Inc</a></li>
+                        <li><a href="#" class="text-dark">MITRAz Skills, Vasawi Niwas building</a></li>
+                        <li><a href="#" class="text-dark">Puttaparthi - 515133</a></li>
+                        <li><a href="#" class="text-dark">Andhra Pradesh</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="text-center bg-black text-white py-3">
+            <p class="mb-0">&copy; 2025 HITA. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        ul li a{ 
+            text-decoration: none;
+        }
+
+        
+/* Custom Cursor Styles */
+/* .cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 15px;
+  height: 15px;
+  background-color: #ff0000; 
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  transition: transform 0.1s ease;
+  
+} */
+
+/* .cursor-large {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 30px;
+  border: 2px solid #ff0000;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.15s ease;
+} */
+    </style>
+    <!-- <script>
+        // Theme Toggle Script
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-theme');
+            const icon = themeToggle.querySelector('i');
+            if (body.classList.contains('dark-theme')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+    </script> -->
+    <script>
+        // Custom Cursor Script
+        const cursor = document.getElementById('cursor');
+        const cursorLarge = document.getElementById('cursor-large');
+    
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+            cursorLarge.style.transform = `translate(${e.clientX - cursorLarge.offsetWidth / 2}px, ${e.clientY - cursorLarge.offsetHeight / 2}px)`;
+        });
+    
+        document.addEventListener('mousedown', () => {
+            cursor.style.transform = 'scale(0.8)';
+            cursorLarge.style.transform = 'scale(0.8)';
+        });
+    
+        document.addEventListener('mouseup', () => {
+            cursor.style.transform = 'scale(1)';
+            cursorLarge.style.transform = 'scale(1)';
+        });
+    </script>
+</body>
+</html>

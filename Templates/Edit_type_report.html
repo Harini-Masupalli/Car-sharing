@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Car Type{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 style="text-align: center;">Edit Car Type</h1>
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('edit_car_type', type_id=car_type.type_id) }}" id="edit-car-type-form" class="w-50 mx-auto">
+            <!-- Car Type Name -->
+            <div class="form-group">
+                <label for="type_name">Car Type Name</label>
+                <input type="text" class="form-control" id="type_name" name="type_name" value="{{ car_type.type_name }}" >
+                <div class="invalid-feedback" id="type_name-error">Car type name is required.</div>
+            </div>
+            <br>
+
+            <!-- Car Type Description -->
+            <div class="form-group">
+                <label for="type_description">Car Type Description</label>
+                <textarea class="form-control" id="type_description" name="type_description" rows="3" >{{ car_type.type_description }}</textarea>
+                <div class="invalid-feedback" id="type_description-error">Car type description is required.</div>
+            </div>
+            <br>
+
+            <!-- Upload New Car Type Image -->
+            <div class="form-group">
+                <label for="type_img">Upload New Car Type Image (Optional)</label>
+                <input type="file" class="form-control" id="type_img" name="type_img" accept=".jpg, .jpeg, .png, .gif, .webp">
+                <small class="form-text text-muted">Leave this blank if you don't want to change the current image.</small>
+                <div class="invalid-feedback" id="type_img-error">Please upload a valid image file (JPG, JPEG, PNG, GIF, WebP).</div>
+            </div>
+            <br>
+
+            <!-- Current Car Image Preview -->
+            <div class="form-group">
+                <label for="current_car_img">Current Car Type Image</label>
+                <div>
+                    {% if car_type.image %}
+                        <img src="/static/uploads/{{ car_type.image }}" alt="Car Type Image" style="width: 150px; height: 100px;">
+                    {% else %}
+                        <p>No image available</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <label><strong>Current Image Filename:</strong> {{ car_type.image or 'No image available' }}</label>
+                </div>
+            </div>
+            <br>
+
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+
+    <script>
+        // Basic form validation
+        document.getElementById('edit-car-type-form').addEventListener('submit', function(event) {
+            let isValid = true;
+
+            // Clear previous error messages
+            document.querySelectorAll('.invalid-feedback').forEach(function(element) {
+                element.style.display = 'none';
+            });
+
+            // Validate Car Type Name
+            const typeName = document.getElementById('type_name');
+            if (!typeName.value.trim()) {
+                document.getElementById('type_name-error').style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate Car Type Description
+            const typeDescription = document.getElementById('type_description');
+            if (!typeDescription.value.trim()) {
+                document.getElementById('type_description-error').style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate Car Type Image (Optional)
+            const typeImg = document.getElementById('type_img');
+            if (typeImg.files.length > 0) {
+                const file = typeImg.files[0];
+                const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                if (!validImageTypes.includes(file.type)) {
+                    document.getElementById('type_img-error').style.display = 'block';
+                    isValid = false;
+                }
+            }
+
+            // If the form is invalid, prevent submission
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    </script>
+{% endblock %}

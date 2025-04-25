@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Car Sharing System{% endblock %}
+
+{% block content %}
+<section class="container my-5">
+  <h2 class="text-center">Car Sharing System</h2>
+  <p>
+    Our car-sharing system offers a convenient, affordable, and sustainable way to access vehicles for short-term use. It connects car owners with drivers, making it easy to rent a car for any occasion—whether you need a vehicle for an hour, a day, or a week. We prioritize user convenience, safety, and flexibility, allowing you to choose from a wide range of cars available through our platform.
+  </p>
+  <p>
+    As part of our commitment to sustainability, we focus on reducing car ownership and lowering environmental impact by promoting shared mobility. This model benefits both car owners, who can monetize their idle vehicles, and renters who gain easy access to reliable transportation.
+  </p>
+  <img src="{{ url_for('static', filename='Uploads/two1.webp') }}" alt="Car Image" style="width: 90%;">
+
+</section>
+{% endblock %}

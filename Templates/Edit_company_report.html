@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Company{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Edit Company</h1>
+    <form method="POST" enctype="multipart/form-data" id="edit-company-form" class="w-50 mx-auto">
+        <div class="form-group">
+            <label for="company_name">Company Name</label>
+            <input type="text" class="form-control" id="company_name" name="company_name" value="{{ company.company_name }}">
+            <div class="invalid-feedback" id="company_name-error">Company name is required.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="company_description">Company Description</label>
+            <textarea class="form-control" id="company_description" name="company_description">{{ company.company_description }}</textarea>
+            <div class="invalid-feedback" id="company_description-error">Company description is required.</div>
+        </div>
+
+       <div class="form-group">
+            <label for="profile_picture">Company Image (Optional)</label>
+            <input type="file" class="form-control" id="profile_picture" name="profile_picture" onchange="previewImage(event)">
+            <small class="form-text text-muted">Leave blank to keep the current image.</small>
+            <div class="invalid-feedback" id="profile_picture-error">Please upload a valid image file (JPG, JPEG, PNG, GIF, WebP).</div>
+        </div>
+        
+        {% if company.image %}
+        <img src="{{ url_for('static', filename='uploads/' + company.image) }}" 
+             alt="{{ company.company_name }}" 
+             class="img-thumbnail" 
+             style="width: 100px; height: 100px;">
+        {% else %}
+        <p>No image uploaded.</p>
+        {% endif %}
+
+        <br>
+        <button type="submit" class="btn btn-primary btn-group-sm">Update Company</button>
+    </form>
+</div>
+
+<script>
+    // Show image preview when a user selects a file
+    function previewImage(event) {
+        const file = event.target.files[0];
+        const previewContainer = document.getElementById('image-preview-container');
+        const previewImage = document.getElementById('image-preview');
+        const imageName = document.getElementById('image-name');
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function () {
+                previewImage.src = reader.result;
+                imageName.textContent = file.name;
+                previewContainer.style.display = 'block';  // Show preview container
+            };
+
+            reader.readAsDataURL(file);
+        } else {
+            previewContainer.style.display = 'none';  // Hide preview container if no file is selected
+        }
+    }
+
+    // Basic form validation
+    document.getElementById('edit-company-form').addEventListener('submit', function(event) {
+        let isValid = true;
+
+        // Clear previous error messages
+        document.querySelectorAll('.invalid-feedback').forEach(function(element) {
+            element.style.display = 'none';
+        });
+
+        // Validate Company Name
+        const companyName = document.getElementById('company_name');
+        if (!companyName.value.trim()) {
+            document.getElementById('company_name-error').style.display = 'block';
+            isValid = false;
+        }
+
+        // Validate Company Description
+        const companyDescription = document.getElementById('company_description');
+        if (!companyDescription.value.trim()) {
+            document.getElementById('company_description-error').style.display = 'block';
+            isValid = false;
+        }
+
+        // Validate Profile Picture (Optional)
+        const profilePicture = document.getElementById('profile_picture');
+        if (profilePicture.files.length > 0) {
+            const file = profilePicture.files[0];
+            const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            if (!validImageTypes.includes(file.type)) {
+                document.getElementById('profile_picture-error').style.display = 'block';
+                isValid = false;
+            }
+        }
+
+        // If the form is invalid, prevent submission
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
+</script>
+{% endblock %}

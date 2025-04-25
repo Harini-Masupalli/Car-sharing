@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Verify OTP{% endblock %}
+
+{% block content %}
+
+<div class="register">
+    <div id="about">
+        <!-- <h2>VERIFY OTP</h2> -->
+    </div>
+</div>
+
+<section class="login-section d-flex justify-content-center align-items-center">
+    <div class="login-card col-md-4">
+        <h4 class="text-center  mt-5" style="font-weight: bold;">Verify OTP</h4>
+        
+        <!-- Flash Messages for Feedback -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alert alert-{{ messages[0][0] }}">
+                    {{ messages[0][1] }}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form id="otpForm" method="POST" action="{{ url_for('verify_login_otp') }}">
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <input type="text" class="form-control" id="otp" name="otp" placeholder="Enter OTP" style="width: 300px; margin: auto;">
+                    <span id="otpError" style="color: red;"></span>
+                </div>
+            </div>
+            <div class="d-grid justify-content-center">
+                <button type="submit" class="btn btn-success">Verify</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+    document.getElementById('otpForm').addEventListener('submit', function(event) {
+        const otp = document.getElementById('otp').value;
+        const otpError = document.getElementById('otpError');
+        let isValid = true;
+
+        if (!otp) {
+            otpError.textContent = "Please enter the OTP.";
+            document.getElementById('otp').focus();
+            isValid = false;
+        } else if (!/^\d{6}$/.test(otp)) {
+            otpError.textContent = "OTP must be a 6-digit number.";
+            document.getElementById('otp').focus();
+            isValid = false;
+        } else {
+            otpError.textContent = "";
+        }
+
+        if (!isValid) {
+            event.preventDefault();
+        }
+
+        return isValid;
+    });
+</script>
+
+{% endblock %}

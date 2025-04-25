@@ -1,0 +1,65 @@
+<div class="row" style="margin-top:100px;margin-bottom: 100px;">
+
+    <div class="col-md-6">
+        <p style="font-size: 55px;font-weight: bolder;">Go Anywhere with hiti</p>
+        <form>
+            <div class="mb-3">
+                <label for="fromLocation" class="form-label">Pickup Location</label>
+                <div class="position-relative">
+                    <input type="text" class="form-control" name="from location" id="fromLocation"
+                        placeholder="Enter Pickup location">
+                    <div class="position-absolute bottom-0 end-0 p-2">
+                        <i class="glyphicon glyphicon-send"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="toLocation" class="form-label">Drop Location</label>
+                <div class="position-relative">
+                    <input type="text" class="form-control" name="to location" id="toLocation"
+                        placeholder="Enter Drop location">
+                    <div class="position-absolute bottom-0 end-0 p-2">
+                        <i class="glyphicon glyphicon-map-marker"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="date" class="form-label">Date</label>
+                    <div class="position-relative">
+                        <input type="date" class="form-control" name="date" id="date" placeholder="Select Date">
+                        <div class="position-absolute bottom-0 end-0 p-2">
+                            <i class="glyphicon glyphicon-calendr"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="time" class="form-label">Time</label>
+                    <div class="position-relative">
+                        <input type="date" class="form-control" name="time" id="time" placeholder="Select Time">
+                        <div class="position-absolute bottom-0 end-0 p-2">
+                            <i class="glyphicon glyphicon-calendr"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+
+    </div>
+    <div class="col-md-6">
+        <div class="map-container" style="width: 100%; height: 400px;">
+            <iframe 
+                width="100%" 
+                height="100%" 
+                frameborder="0" 
+                style="border:0" 
+                src="https://www.openstreetmap.org/export/embed.html?bbox=77.0427,28.5790,77.2882,28.8077&layer=mapnik" 
+                allowfullscreen="">
+            </iframe>
+        </div>
+        
+    </div>
+</div>

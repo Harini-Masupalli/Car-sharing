@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Car Types Report{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center">Car Types Report</h1>
+        <div id="car-types-container" class="mt-4">
+            <!-- Flash message -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="alert-list">
+                    {% for category, message in messages %}
+                        <li class="alert alert-{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% endwith %}
+
+            <h4>All Car Types</h4>
+            
+            {% if car_types %}
+                <!-- Table of car types -->
+                <table class="table table-striped" style="max-width: 1200px; margin: 0 auto;">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Sr.No.</th>
+                            <th>Image</th>
+                            <th>Type Name</th>
+                            {#<th>Type Description</th>#}
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for type in car_types %}
+                            <tr>
+                                <td>{{ loop.index + (current_page - 1) * per_page }}</td>
+                                <td>
+                                    <!-- Image Click to Open Modal -->
+                                    <img src="/static/uploads/{{ type.image or 'default-avatar.png' }}" 
+                                         alt="{{ type.image }}" 
+                                         class="img-thumbnail" 
+                                         style="width: 120px; height: 80px;" 
+                                         data-bs-toggle="modal" data-bs-target="#carTypeModal{{ type.type_id }}">
+                                </td>
+                                <td>{{ type.type_name }}</td>
+                                {#<td>{{ type.type_description or 'N/A' }}</td>#}
+                                <td>
+                                    <!-- View Button (Triggers Modal) -->
+                                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#carTypeModal{{ type.type_id }}">View</button>
+
+                                    <!-- Modal for Car Type Details -->
+                                    <div class="modal fade m-5" id="carTypeModal{{ type.type_id }}" tabindex="-1" aria-labelledby="carTypeModalLabel{{ type.type_id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="carTypeModalLabel{{ type.type_id }}">Car Type Details</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><strong>Type Name:</strong> {{ type.type_name }}</p>
+                                                    <p><strong>Type Description:</strong> {{ type.type_description or 'N/A' }}</p>
+                                                    <div><strong>Image:</strong><br>
+                                                        {% if type.image %}
+                                                            <img src="/static/uploads/{{ type.image }}" alt="Car Type Image" class="img-fluid" style="max-width: 100%; height: auto;">
+                                                        {% else %}
+                                                            <p>No image available</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Edit and Delete Actions -->
+                                    <a href="{{ url_for('edit_car_type', type_id=type['type_id']) }}" class="btn btn-success btn-sm">Edit</a>
+                                    <!-- Delete Form with Confirmation -->
+                                   <form action="{{ url_for('delete_car_type', type_id=type['type_id']) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete();">
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Pagination Controls (only display if data is available) -->
+                <div class="d-flex justify-content-center mt-4">
+                    <nav>
+                        <ul class="pagination">
+                            {% if current_page > 1 %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('car_types_report', page=current_page - 1) }}">Previous</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">Previous</span>
+                                </li>
+                            {% endif %}
+
+                            {% for num in range(1, total_pages + 1) %}
+                                {% if num == current_page %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('car_types_report', page=num) }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if current_page < total_pages %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('car_types_report', page=current_page + 1) }}">Next</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">Next</span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+
+            {% else %}
+                <!-- Message when no car types are available -->
+                <div class="alert alert-warning text-center mt-4">No car types available</div>
+
+                <!-- Show car types dropdown when no data is available -->
+                <div class="alert alert-info text-center">
+                    <p>Please add car types to get started.</p>
+                    <a href="{{ url_for('add_car_type') }}" class="btn btn-primary">Add Car Type</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- JavaScript for Delete Confirmation -->
+    <script>
+        function confirmDelete() {
+            return confirm('Are you sure you want to delete this car type? This action cannot be undone.');
+        }
+    </script>
+{% endblock %}

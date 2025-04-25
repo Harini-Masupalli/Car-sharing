@@ -1,0 +1,470 @@
+{% extends "base.html" %}
+
+{% block title %}Account{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+      <div class="card shadow">
+        <div class="card-header bg-danger text-white text-center">
+          <h3>Profile</h3>
+        </div>
+        <!-- Flash Message Section -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="container mt-3">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    <strong>{{ category|capitalize }}!</strong> {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+        <div class="card-body">
+          <form id="profile-form" enctype="multipart/form-data" method="POST">
+            <!-- User Name and Login ID -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="name" class="form-label">User Name</label>
+                <input type="text" class="form-control" name="name" id="name" placeholder="Enter your Name" value="{{ user.username }}">
+                <div class="error-message" id="name-error"></div>
+              </div>
+              <div class="col-md-6">
+                <label for="role" class="form-label">Role</label>
+                <select name="role" id="role" class="form-select">
+                  <option value="Admin" {% if user.role == 'Admin' %}selected{% endif %}>Admin</option>
+                  <option value="User" {% if user.role == 'User' %}selected{% endif %}>User</option>
+                </select>
+                <div class="error-message" id="role-error"></div>
+              </div>
+            </div>
+
+            <!-- Email and Date of Birth -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="email" class="form-label">User Email:</label>
+                <input type="email" class="form-control" name="email" id="email" placeholder="User Email" value="{{ user.email }}">
+                <div class="error-message" id="email-error"></div>
+              </div>
+              <div class="col-md-6">
+                <label for="dob" class="form-label">User Date of Birth</label>
+                <input type="date" class="form-control" id="dob" name="dob" value="{{ user.birthday }}">
+                <div class="error-message" id="dob-error"></div>
+              </div>
+            </div>
+
+            <!-- Gender and Phone Number -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="gender" class="form-label">Gender</label>
+                <div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="male" name="gender" value="Male" {% if user.gender == 'Male' %}checked{% endif %}>
+                    <label class="form-check-label" for="male">Male</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="female" name="gender" value="Female" {% if user.gender == 'Female' %}checked{% endif %}>
+                    <label class="form-check-label" for="female">Female</label>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="phone" class="form-label">User Mobile:</label>
+                <input type="tel" class="form-control" name="phone" id="phone" value="{{ user.phone_number }}">
+                <div class="error-message" id="phone-error"></div>
+              </div>
+            </div>
+
+            <!-- Address -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="address1" class="form-label">User Address Line 1</label>
+                <input type="text" class="form-control" id="address1" name="address1" placeholder="Address Line 1" value="{{ user.address_line1 }}">
+                <div class="error-message" id="address1-error"></div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="address2" class="form-label">User Address Line 2</label>
+                <input type="text" class="form-control" id="address2" name="address2" placeholder="Address Line 2" value="{{ user.address_line1 }}" >
+                <div class="error-message" id="address2-error"></div>
+              </div>
+            </div>  
+
+            <!-- Country, State, and City Selectors -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="country" class="form-label">Country:</label>
+                <select name="country" id="country" class="form-select">
+                  <option value="">Select Country</option>
+                  {% for country in countries %}
+                    <option value="{{ country.id }}" {% if country.id == user.country_id %}selected{% endif %}>{{ user.country }}</option>
+                  {% endfor %}
+                </select>
+                <div class="error-message" id="country-error"></div>
+              </div>
+              <div class="col-md-6">
+                <label for="state" class="form-label">State:</label>
+                <select name="state" id="state" class="form-select">
+                  <option value="">Select State</option>
+                  {% for state in states %}
+                    <option value="{{ state.id }}" {% if state.id == user.state_id %}selected{% endif %}>{{ user.state }}</option>
+                  {% endfor %}
+                </select>
+                <div class="error-message" id="state-error"></div>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="city" class="form-label">City:</label>
+                <select name="city" id="city" class="form-select">
+                  <option value="">Select City</option>
+                  {% for city in cities %}
+                    <option value="{{ city.id }}" {% if city.id == user.city_id %}selected{% endif %}>{{ user.city }}</option>
+                  {% endfor %}
+                </select>
+                <div class="error-message" id="city-error"></div>
+              </div>
+            </div>
+
+            <!-- Profile Picture -->
+            <div class="mb-3">
+              <label for="profile_picture" class="form-label">User Picture</label>
+              <input type="file" class="form-control" id="profile_picture" name="profile_picture">
+              {% if user.profile_picture %}
+                <img src="{{ url_for('static', filename='uploads/' + user.profile_picture) }}" alt="Profile Picture" class="img-thumbnail mt-2" style="width: 100px;">
+              <h5>{{ user.profile_picture }}</h5>
+              {% endif %}
+              <div class="error-message" id="pp-error"></div>  
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex gap-2" style="width: 60%; margin: auto; justify-content: center;">
+                <button type="submit" class="btn btn-danger">Update</button>
+            </div>
+              <!-- <button type="reset" class="btn btn-primary">Reset</button> -->
+            </div>
+            </div>
+            {#<div style="text-align: center;">Already have an account? <a href="{{ url_for('login') }}"> Login </a> here.</div>#}
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Fetch countries, states, and cities dynamically
+    fetchCountries();
+
+    function fetchCountries() {
+      fetch('/countries')
+        .then(response => response.json())
+        .then(data => {
+          const countrySelect = document.getElementById('country');
+          data.forEach(country => {
+            const option = document.createElement('option');
+            option.value = country.id;
+            option.textContent = country.name;
+            countrySelect.appendChild(option);
+          });
+        })
+        .catch(error => console.error('Error fetching countries:', error));
+    }
+
+    // Event listener for country selection change
+    document.getElementById('country').addEventListener('change', function () {
+      const countryId = this.value;
+      if (countryId) {
+        fetchStates(countryId);
+      }
+    });
+
+    function fetchStates(countryId) {
+      fetch(`/states?country_id=${countryId}`)
+        .then(response => response.json())
+        .then(data => {
+          const stateSelect = document.getElementById('state');
+          stateSelect.innerHTML = '<option value="">Select State</option>';
+          data.forEach(state => {
+            const option = document.createElement('option');
+            option.value = state.id;
+            option.textContent = state.name;
+            stateSelect.appendChild(option);
+          });
+          stateSelect.disabled = false;
+        })
+        .catch(error => console.error('Error fetching states:', error));
+    }
+
+    // Event listener for state selection change
+    document.getElementById('state').addEventListener('change', function () {
+      const stateId = this.value;
+      const countryId = document.getElementById('country').value;
+      if (stateId) {
+        fetchCities(countryId, stateId);
+      }
+    });
+
+    function fetchCities(countryId, stateId) {
+      fetch(`/cities?country_id=${countryId}&state_id=${stateId}`)
+        .then(response => response.json())
+        .then(data => {
+          const citySelect = document.getElementById('city');
+          citySelect.innerHTML = '<option value="">Select City</option>';
+          data.forEach(city => {
+            const option = document.createElement('option');
+            option.value = city.id;
+            option.textContent = city.name;
+            citySelect.appendChild(option);
+          });
+          citySelect.disabled = false;
+        })
+        .catch(error => console.error('Error fetching cities:', error));
+    }
+
+    // Form validation
+    document.getElementById('account-form').addEventListener('submit', function (event) {
+      event.preventDefault();
+      let isValid = true;
+
+      // Validate fields
+      clearErrors();
+      
+      if (!document.getElementById('name').value.trim()) {
+        showError('name', 'name-error', 'User name is required.');
+        isValid = false;
+      }
+      if (!document.getElementById('email').value.trim()) {
+        showError('email', 'email-error', 'Email is required.');
+        isValid = false;
+      }
+      if (!document.getElementById('phone').value.trim()) {
+        showError('phone', 'phone-error', 'Phone number is required.');
+        isValid = false;
+      }
+      if (!document.getElementById('address1').value.trim()) {
+        showError('address1', 'address1-error', 'Address Line 1 is required.');
+        isValid = false;
+      }
+      if (!document.getElementById('address2').value.trim()) {
+        showError('address2', 'address2-error', 'Address Line 2 is required.');
+        isValid = false;
+      }
+      if (!document.getElementById('country').value) {
+        showError('country', 'country-error', 'Country selection is required.');
+        isValid = false;
+      }
+      if (!document.getElementById('state').value) {
+        showError('state', 'state-error', 'State selection is required.');
+        isValid = false;
+      }
+      if (!document.getElementById('city').value) {
+        showError('city', 'city-error', 'City selection is required.');
+        isValid = false;
+      }
+      if (!document.getElementById('profile_picture').files.length) {
+        showError('profile_picture', 'pp-error', 'Profile picture is required.');
+        isValid = false;
+      }
+
+      // Prevent form submission if invalid
+      if (isValid) {
+        this.submit();
+      }
+    });
+
+    function showError(fieldId, errorId, errorMessage) {
+      const field = document.getElementById(fieldId);
+      const errorMessageElement = document.getElementById(errorId);
+      field.classList.add('is-invalid');
+      errorMessageElement.textContent = errorMessage;
+      errorMessageElement.style.display = 'block';
+    }
+
+    function clearErrors() {
+      const fields = document.querySelectorAll('.form-control');
+      fields.forEach(field => field.classList.remove('is-invalid'));
+
+      const errorMessages = document.querySelectorAll('.error-message');
+      errorMessages.forEach(msg => {
+        msg.style.display = 'none';
+        msg.textContent = '';
+      });
+    }
+
+    // Clear error when user starts typing
+    document.querySelectorAll('.form-control').forEach(field => {
+      field.addEventListener('input', function () {
+        const errorMessage = document.getElementById(this.id + '-error');
+        if (errorMessage) {
+          this.classList.remove('is-invalid');
+          errorMessage.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Fetch countries, states, and cities dynamically
+    fetchCountries();
+
+    function fetchCountries() {
+      fetch('/countries')
+        .then(response => response.json())
+        .then(data => {
+          const countrySelect = document.getElementById('country');
+          data.forEach(country => {
+            const option = document.createElement('option');
+            option.value = country.id;
+            option.textContent = country.name;
+            countrySelect.appendChild(option);
+          });
+        })
+        .catch(error => console.error('Error fetching countries:', error));
+    }
+
+    // Event listener for country selection change
+    document.getElementById('country').addEventListener('change', function () {
+      const countryId = this.value;
+      if (countryId) {
+        fetchStates(countryId);
+      }
+    });
+
+    function fetchStates(countryId) {
+      fetch(`/states?country_id=${countryId}`)
+        .then(response => response.json())
+        .then(data => {
+          const stateSelect = document.getElementById('state');
+          stateSelect.innerHTML = '<option value="">Select State</option>';
+          data.forEach(state => {
+            const option = document.createElement('option');
+            option.value = state.id;
+            option.textContent = state.name;
+            stateSelect.appendChild(option);
+          });
+          stateSelect.disabled = false;
+        })
+        .catch(error => console.error('Error fetching states:', error));
+    }
+
+    // Event listener for state selection change
+    document.getElementById('state').addEventListener('change', function () {
+      const stateId = this.value;
+      const countryId = document.getElementById('country').value;
+      if (stateId) {
+        fetchCities(countryId, stateId);
+      }
+    });
+
+    function fetchCities(countryId, stateId) {
+      fetch(`/cities?country_id=${countryId}&state_id=${stateId}`)
+        .then(response => response.json())
+        .then(data => {
+          const citySelect = document.getElementById('city');
+          citySelect.innerHTML = '<option value="">Select City</option>';
+          data.forEach(city => {
+            const option = document.createElement('option');
+            option.value = city.id;
+            option.textContent = city.name;
+            citySelect.appendChild(option);
+          });
+          citySelect.disabled = false;
+        })
+        .catch(error => console.error('Error fetching cities:', error));
+    }
+
+    // Form validation
+    document.getElementById('profile-form').addEventListener('submit', function (event) {
+      event.preventDefault();
+      let isValid = true;
+
+      // Validate fields
+      clearErrors();
+      
+      if (!document.getElementById('name').value.trim()) {
+        showError('name', 'name-error', 'User name is required.');
+        isValid = false;
+      }
+      if (!document.getElementById('email').value.trim()) {
+        showError('email', 'email-error', 'Email is required.');
+        isValid = false;
+      }
+      if (!document.getElementById('phone').value.trim()) {
+        showError('phone', 'phone-error', 'Phone number is required.');
+        isValid = false;
+      }
+      if (!document.getElementById('address1').value.trim()) {
+        showError('address1', 'address1-error', 'Address Line 1 is required.');
+        isValid = false;
+      }
+      if (!document.getElementById('address2').value.trim()) {
+        showError('address2', 'address2-error', 'Address Line 2 is required.');
+        isValid = false;
+      }
+      if (!document.getElementById('country').value) {
+        showError('country', 'country-error', 'Country selection is required.');
+        isValid = false;
+      }
+      if (!document.getElementById('state').value) {
+        showError('state', 'state-error', 'State selection is required.');
+        isValid = false;
+      }
+      if (!document.getElementById('city').value) {
+        showError('city', 'city-error', 'City selection is required.');
+        isValid = false;
+      }
+      if (!document.getElementById('profile_picture').files.length) {
+        showError('profile_picture', 'pp-error', 'Profile picture is required.');
+        isValid = false;
+      }
+
+      // Prevent form submission if invalid
+      if (isValid) {
+        this.submit();
+      }
+    });
+
+    function showError(fieldId, errorId, errorMessage) {
+      const field = document.getElementById(fieldId);
+      const errorMessageElement = document.getElementById(errorId);
+      field.classList.add('is-invalid');
+      errorMessageElement.textContent = errorMessage;
+      errorMessageElement.style.display = 'block';
+    }
+
+    function clearErrors() {
+      const fields = document.querySelectorAll('.form-control');
+      fields.forEach(field => field.classList.remove('is-invalid'));
+
+      const errorMessages = document.querySelectorAll('.error-message');
+      errorMessages.forEach(msg => {
+        msg.style.display = 'none';
+        msg.textContent = '';
+      });
+    }
+
+    // Clear error when user starts typing
+    document.querySelectorAll('.form-control').forEach(field => {
+      field.addEventListener('input', function () {
+        const errorMessage = document.getElementById(this.id + '-error');
+        if (errorMessage) {
+          this.classList.remove('is-invalid');
+          errorMessage.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+
+
+
+{% endblock %}

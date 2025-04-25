@@ -1,0 +1,433 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+
+<style>
+  .is-invalid {
+  border: 2px solid red !important;
+}
+
+.error-message {
+  color: rgb(224, 28, 28);
+  font-size: medium;
+}
+
+</style>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+      <div class="card shadow">
+        <div class="card-header bg-danger text-white text-center">
+          <h3>Car Sharing System - Registration</h3>
+        </div>
+        <div class="card-body">
+          <!-- <form id="register-form" enctype="multipart/form-data" method="POST"> -->
+            <form id="register-form" action="/register" method="POST" enctype="multipart/form-data">
+            <!-- User Name and Role -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="name" class="form-label">User Name</label>
+                <input type="text" class="form-control" name="name" id="name" placeholder="Enter your Name">
+                <div class="error-message" id="name-error"></div>
+              </div>
+              <div class="col-md-6">
+                <label for="role" class="form-label">Role</label>
+                <select name="role" id="role" class="form-select">
+                  <option value="">Select Role</option>
+                  <option value="Admin">Admin</option>
+                  <option value="User">User</option>
+                </select>
+                <div class="error-message" id="role-error"></div>
+              </div>
+            </div>
+
+            
+            <!-- Password and Confirm Password with Eye Toggle -->
+            <div class="row mb-3">
+              <div class="col-md-6 position-relative">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                  <span class="input-group-text cursor-pointer" id="togglePassword">
+                    <i class="fas fa-eye"></i>
+                  </span>
+                </div>
+                <div class="error-message" id="password-error"></div>
+              </div>
+              
+              <div class="col-md-6 position-relative">
+                <label for="confirm_password" class="form-label">Confirm Password</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="confirmPassword" name="confirm_password" placeholder="Confirm Password">
+                  <span class="input-group-text cursor-pointer" id="toggleConfirmPassword">
+                    <i class="fas fa-eye"></i>
+                  </span>
+                </div>
+                <div class="error-message" id="confirm-password-error"></div>
+              </div>
+            </div>
+
+            <!-- Email and Date of Birth -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="email" class="form-label">User Email:</label>
+                <input type="email" class="form-control" name="email" id="email" placeholder="User Email">
+                <div class="error-message" id="email-error"></div>
+              </div>
+              <div class="col-md-6">
+                <label for="dob" class="form-label">User Date of Birth</label>
+                <input type="date" class="form-control" id="dob" name="dob">
+                <div class="error-message" id="dob-error"></div>
+              </div>
+            </div>
+
+            <!-- Gender and Phone Number -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="gender" class="form-label">Gender</label>
+                <div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="male" name="gender" value="Male">
+                    <label class="form-check-label" for="male">Male</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="female" name="gender" value="Female">
+                    <label class="form-check-label" for="female">Female</label>
+                  </div>
+                </div>
+                <div class="error-message" id="gender-error"></div>
+              </div>
+              <div class="col-md-6">
+                <label for="phone" class="form-label">User Mobile:</label>
+                <input type="tel" class="form-control" name="phone" id="phone">
+                <div class="error-message" id="phone-error"></div>
+              </div>
+            </div>
+            <!-- Address Line 1 and Address Line 2 -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="address_line1" class="form-label">Address Line 1</label>
+                <input type="text" class="form-control" name="address_line1" id="address_line1" placeholder="Enter Address Line 1">
+                <div class="error-message" id="address-line1-error"></div>
+              </div>
+              <div class="col-md-6">
+                <label for="address_line2" class="form-label">Address Line 2</label>
+                <input type="text" class="form-control" name="address_line2" id="address_line2" placeholder="Enter Address Line 2">
+                <div class="error-message" id="address-line2-error"></div>
+              </div>
+            </div>
+
+            <!-- Country, State, and City Selectors -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="country" class="form-label">Country:</label>
+                <select name="country" id="country" class="form-select">
+                  <option value="">Select Country</option>
+                </select>
+                <div class="error-message" id="country-error"></div>
+              </div>
+              <div class="col-md-6">
+                <label for="state" class="form-label">State:</label>
+                <select name="state" id="state" class="form-select" disabled>
+                  <option value="">Select State</option>
+                </select>
+                <div class="error-message" id="state-error"></div>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="city" class="form-label">City:</label>
+                <select name="city" id="city" class="form-select" disabled>
+                  <option value="">Select City</option>
+                </select>
+                <div class="error-message" id="city-error"></div>
+              </div>
+            </div>
+
+            
+
+            <!-- Profile Picture -->
+            <div class="mb-3">
+              <label for="profile_picture" class="form-label">User Picture</label>
+              <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept=".png, .jpg, .jpeg, .gif, .webp">
+             <div class="error-message" id="pp-error"></div>  
+            </div>
+
+            <!-- Buttons -->
+            <div class="buttons-container">
+              <button type="submit" class="btn btn-danger">Submit</button>
+              <button type="reset" class="btn btn-primary">Reset</button>
+            </div>
+            <div style="text-align: center;">Already have an account? <a href="{{ url_for('login') }}"> Login </a> here.</div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+ document.addEventListener('DOMContentLoaded', function () {
+  fetchCountries();
+
+  function fetchCountries() {
+    fetch('/countries')
+      .then(response => response.json())
+      .then(data => {
+        const countrySelect = document.getElementById('country');
+        data.forEach(country => {
+          const option = document.createElement('option');
+          option.value = country.id;
+          option.textContent = country.name;
+          countrySelect.appendChild(option);
+        });
+      })
+      .catch(error => console.error('Error fetching countries:', error));
+  }
+
+  document.getElementById('country').addEventListener('change', function () {
+    const countryId = this.value;
+    if (countryId) {
+      fetchStates(countryId);
+    }
+  });
+
+  function fetchStates(countryId) {
+    fetch(`/states?country_id=${countryId}`)
+      .then(response => response.json())
+      .then(data => {
+        const stateSelect = document.getElementById('state');
+        stateSelect.innerHTML = '<option value="">Select State</option>';
+        data.forEach(state => {
+          const option = document.createElement('option');
+          option.value = state.id;
+          option.textContent = state.name;
+          stateSelect.appendChild(option);
+        });
+        stateSelect.disabled = false;
+      })
+      .catch(error => console.error('Error fetching states:', error));
+  }
+
+  document.getElementById('state').addEventListener('change', function () {
+    const stateId = this.value;
+    const countryId = document.getElementById('country').value;
+    if (stateId) {
+      fetchCities(countryId, stateId);
+    }
+  });
+
+  function fetchCities(countryId, stateId) {
+    fetch(`/cities?country_id=${countryId}&state_id=${stateId}`)
+      .then(response => response.json())
+      .then(data => {
+        const citySelect = document.getElementById('city');
+        citySelect.innerHTML = '<option value="">Select City</option>';
+        data.forEach(city => {
+          const option = document.createElement('option');
+          option.value = city.id;
+          option.textContent = city.name;
+          citySelect.appendChild(option);
+        });
+        citySelect.disabled = false;
+      })
+      .catch(error => console.error('Error fetching cities:', error));
+  }
+});
+
+</script>
+
+<script>
+  // Toggle password visibility
+  function togglePasswordVisibility(inputId, iconId) {
+    var passwordField = document.getElementById(inputId);
+    var icon = document.getElementById(iconId).querySelector("i");
+
+    if (passwordField.type === "password") {
+      passwordField.type = "text";
+      icon.classList.remove("fa-eye");
+      icon.classList.add("fa-eye-slash");
+    } else {
+      passwordField.type = "password";
+      icon.classList.remove("fa-eye-slash");
+      icon.classList.add("fa-eye");
+    }
+  }
+
+  // Event listeners to toggle password visibility
+  document.getElementById("togglePassword").addEventListener("click", function() {
+    togglePasswordVisibility("password", "togglePassword");
+  });
+  document.getElementById("toggleConfirmPassword").addEventListener("click", function() {
+    togglePasswordVisibility("confirmPassword", "toggleConfirmPassword");
+  });
+
+  // Validate form on submit
+  document.getElementById('register-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    let isValid = true;
+
+    // Clear previous error messages
+    clearErrorMessages();
+
+    // Validate fields
+    isValid &= validateName();
+    isValid &= validatePhone();
+    isValid &= validateEmail();
+    isValid &= validatePassword();
+    isValid &= validateConfirmPassword();
+    isValid &= validateAddressLine1();
+    isValid &= validateRequiredField('role', 'role-error');
+    isValid &= validateRequiredField('dob', 'dob-error');
+    isValid &= validateRequiredField('country', 'country-error');
+    isValid &= validateRequiredField('state', 'state-error');
+    isValid &= validateRequiredField('city', 'city-error');
+    isValid &= validateRequiredField('profile_picture', 'pp-error');
+
+    // If valid, submit the form
+    if (isValid) {
+      const formData = new FormData(this);
+      fetch('/register', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        if (response.redirected) {
+          window.location.href = response.url;
+        } else {
+          return response.json();
+        }
+      })
+      .then(data => {
+        if (data && data.message) {
+          alert(data.message);
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    }
+  });
+
+  // Clear all error messages
+  function clearErrorMessages() {
+    const errorElements = document.querySelectorAll('.error-message');
+    errorElements.forEach(element => {
+      element.textContent = '';
+    });
+  }
+
+  // Validate name
+  function validateName() {
+    const name = document.getElementById('name').value.trim();
+    const nameError = document.getElementById('name-error');
+    
+    // Check if name is empty
+    if (!name) {
+        nameError.textContent = "Name is required!";
+        return false;
+    }
+    if(name.length < 3){
+        nameError.textContent = "Name should be at least 3 characters long!";
+        return false;
+    }
+    
+    // Regular expression to check if the name contains only letters (no numbers or special characters)
+    const regex = /^[A-Za-z\s]+$/;
+
+    // Validate if the name only contains letters and spaces
+    if (!regex.test(name)) {
+        nameError.textContent = "Name should only contain letters and spaces!";
+        return false;
+    }
+
+    // Clear the error if valid
+    nameError.textContent = "";
+    return true;
+}
+
+
+  // Validate phone number
+  function validatePhone() {
+    const phone = document.getElementById('phone').value.trim();
+    const phoneError = document.getElementById('phone-error');
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phone || !phoneRegex.test(phone)) {
+      phoneError.textContent = "Please enter a valid 10-digit phone number!";
+      return false;
+    }
+    phoneError.textContent = "";
+    return true;
+  }
+
+  // Validate email
+  function validateEmail() {
+    const email = document.getElementById('email').value.trim();
+    const emailError = document.getElementById('email-error');
+    const emailRegex = /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/;
+    if (!email || !emailRegex.test(email)) {
+      emailError.textContent = "Please enter a valid email address!";
+      return false;
+    }
+    emailError.textContent = "";
+    return true;
+  }
+
+  // Validate password
+  function validatePassword() {
+    const password = document.getElementById('password').value.trim();
+    const passwordError = document.getElementById('password-error');
+    if (!password) {
+      passwordError.textContent = "Password is required!";
+      return false;
+    }
+    passwordError.textContent = "";
+    return true;
+  }
+
+  // Validate confirm password
+  function validateConfirmPassword() {
+    const password = document.getElementById('password').value.trim();
+    const confirmPassword = document.getElementById('confirmPassword').value.trim();
+    const confirmPasswordError = document.getElementById('confirm-password-error');
+    if (confirmPassword !== password) {
+      confirmPasswordError.textContent = "Passwords do not match!";
+      return false;
+    }
+    confirmPasswordError.textContent = "";
+    return true;
+  }
+
+  // Validate address line 1
+  function validateAddressLine1() {
+    const addressLine1 = document.getElementById('address_line1').value.trim();
+    const addressLine1Error = document.getElementById('address-line1-error');
+    if (!addressLine1) {
+      addressLine1Error.textContent = "Address Line 1 is required!";
+      return false;
+    }
+    addressLine1Error.textContent = "";
+    return true;
+  }
+
+  // Validate required field
+  function validateRequiredField(fieldId, errorId) {
+    const field = document.getElementById(fieldId);
+    if (!field.value.trim()) {
+      document.getElementById(errorId).textContent = `${capitalizeFirstLetter(fieldId)} is required!`;
+      return false;
+    }
+    document.getElementById(errorId).textContent = "";
+    return true;
+  }
+  
+
+  // Capitalize first letter of string
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+</script>
+
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+<style>
+    .fa-map-marker-alt, h4, .fa-envelope, .fa-phone {
+            color: rgb(186, 24, 24) !important;
+        }
+</style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <div class="container my-5">
+        <div class="contact-header">
+            <h1>Contact</h1>
+            <p>A Contact Us page isn’t just another page on your website. It provides guidance for existing customers and an overview of your brand for new visitors.</p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row">
+            <div class="col-md-6 contact-details">
+                <h4><i class="fas fa-map-marker-alt"></i> Location:</h4>
+                <p>MITRAz Skills, Puttaparthi, India</p>
+                <h4><i class="fas fa-envelope"></i> Email:</h4>
+                <p>connectmitraz.org</p>
+                <h4><i class="fas fa-phone"></i> Call:</h4>
+                <p>7095080330</p>
+                <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3934.678356110523!2d77.6335055!3d14.1202703!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bb682ea687551f7%3A0x34d9d7f928603b1b!2sPrashanthi%20Nilayam%2C%20Puttaparthi!5e0!3m2!1sen!2sin!4v1675109572761!5m2!1sen!2sin"
+                width="100%" height="200" loading="lazy">
+            </iframe>
+
+                <!-- <iframe src="https://www.google.com/maps/embed?..." width="100%" height="200" loading="lazy"></iframe> -->
+            </div>
+
+            <div class="col-md-6 contact-form">
+                <form action="{{ url_for('contact') }}" method="post" id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" name="name">
+                        <small class="text-danger" id="nameError"></small>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email">
+                        <small class="text-danger" id="emailError"></small>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" class="form-control" id="subject" name="subject">
+                        <small class="text-danger" id="subjectError"></small>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea class="form-control" id="message" name="message" rows="4"></textarea>
+                        <small class="text-danger" id="messageError"></small>
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-danger">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            let valid = true;
+            
+            function showError(id, message) {
+                document.getElementById(id).textContent = message;
+            }
+
+            function clearError(id) {
+                document.getElementById(id).textContent = '';
+            }
+            
+            let name = document.getElementById('name').value.trim();
+            let email = document.getElementById('email').value.trim();
+            let subject = document.getElementById('subject').value.trim();
+            let message = document.getElementById('message').value.trim();
+            
+            if (name === '') {
+                showError('nameError', 'Name is required.');
+                valid = false;
+            } else {
+                clearError('nameError');
+            }
+            
+            let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email === '') {
+                showError('emailError', 'Email is required.');
+                valid = false;
+            } else if (!emailPattern.test(email)) {
+                showError('emailError', 'Enter a valid email address.');
+                valid = false;
+            } else {
+                clearError('emailError');
+            }
+            
+            if (subject === '') {
+                showError('subjectError', 'Subject is required.');
+                valid = false;
+            } else {
+                clearError('subjectError');
+            }
+            
+            if (message === '') {
+                showError('messageError', 'Message cannot be empty.');
+                valid = false;
+            } else {
+                clearError('messageError');
+            }
+            
+            if (!valid) {
+                event.preventDefault();
+            }
+        });
+    </script>
+{% endblock %}

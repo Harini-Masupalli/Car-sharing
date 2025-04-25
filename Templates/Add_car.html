@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block title %}Add Car{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10 col-sm-12">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white text-center">
+                    <h3>Add a New Car</h3>
+                </div>
+                {% with messages = get_flashed_messages(with_categories=True) %}
+                    {% if messages %}
+                        <div class="container mt-3">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div class="card-body">
+                    <form id="add_car_form" action="{{ url_for('add_car') }}" method="POST" enctype="multipart/form-data" novalidate>
+                        {#<div class="d-flex justify-content-between mb-3">
+                           <button class="btn btn-danger"><a href="{{ url_for('add_car_type') }}" class="stretched-link text-decoration-none text-light">Add Car Type</a></button>
+                        <button class="btn btn-danger"><a href="{{ url_for('add_company') }}" class="stretched-link text-decoration-none text-light">Add Company</a></button>
+                        </div>#}
+                        <br>
+                        <!-- Car Name -->
+                        <div class="mb-3">
+                            <label for="car_name" class="form-label">Car Name</label>
+                            <input type="text" class="form-control" id="car_name" name="car_name" placeholder="Car Name">
+                            <div class="invalid-feedback" id="car_name_error">Car name is required.</div>
+                        </div>
+
+                        <!-- Car Type -->
+                        <div class="mb-3">
+                            <label for="car_type" class="form-label">Car Type</label>
+                            <select class="form-select" id="car_type" name="car_type">
+                                <option value="">Please Select</option>
+                                {% for type in car_types %}
+                                    <option value="{{ type.type_id }}">{{ type.type_name }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback" id="car_type_error">Please select a car type.</div>
+                        </div>
+
+                        <!-- Company Name -->
+                        <div class="mb-3">
+                            <label for="company_name" class="form-label">Company Name</label>
+                            <select class="form-select" id="company_name" name="company_name">
+                                <option value="">Please Select</option>
+                                {% for company in companies %}
+                                    <option value="{{ company.company_id }}">{{ company.company_name }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback" id="company_name_error">Please select a company.</div>
+                        </div>
+
+                        <!-- Price Per Day -->
+                        <div class="mb-3">
+                            <label for="price_per_day" class="form-label">Price Per Day</label>
+                            <input type="number" class="form-control" id="price_per_day" name="price_per_day" placeholder="Price Per Day" min="0">
+                            <div class="invalid-feedback" id="price_per_day_error">Price per day must be a positive number.</div>
+                        </div>
+
+                        <!-- Stock -->
+                        <div class="mb-3">
+                            <label for="stock" class="form-label">Stock</label>
+                            <input type="number" class="form-control" id="stock" name="stock" placeholder="Stock" min="1">
+                            <div class="invalid-feedback" id="stock_error">Stock must be a positive number.</div>
+                        </div>
+
+                        <!-- From Location -->
+                        <div class="mb-3">
+                            <label for="from_location" class="form-label">From Location</label>
+                            <input type="text" class="form-control" id="from_location" name="from_location" placeholder="From Location">
+                            <div class="invalid-feedback" id="from_location_error">From location is required.</div>
+                        </div>
+                        
+                        <!-- To Location -->
+                        <div class="mb-3">
+                            <label for="to_location" class="form-label">To Location</label>
+                            <input type="text" class="form-control" id="to_location" name="to_location" placeholder="To Location">
+                            <div class="invalid-feedback" id="to_location_error">To location is required.</div>
+                        </div>
+                        
+                        <!-- Car Image -->
+                        <div class="mb-3">
+                            <label for="car_image" class="form-label">Car Image</label>
+                            <input type="file" class="form-control" id="car_image" name="car_image" accept=".png, .jpg, .jpeg, .gif, .webp">
+                            <div class="invalid-feedback" id="car_image_error">Please upload a car image.</div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Car Description"></textarea>
+                            <div class="invalid-feedback" id="description_error">Description is required.</div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger" style="width: 200px; margin-left: 300px;">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add event listener to handle the form submission
+    document.getElementById("add_car_form").addEventListener("submit", function(event) {
+        event.preventDefault();  // Prevent default form submission
+
+        // Validate form fields
+        let isValid = true;
+
+        const carName = document.getElementById("car_name");
+        const carType = document.getElementById("car_type");
+        const companyName = document.getElementById("company_name");
+        const pricePerDay = document.getElementById("price_per_day");
+        const stock = document.getElementById("stock");
+        const fromLocation = document.getElementById("from_location");
+        const toLocation = document.getElementById("to_location");
+        const carImage = document.getElementById("car_image");
+        const description = document.getElementById("description");
+
+        // Clear previous error messages
+        clearErrors();
+
+        // Validate fields
+        if (!carName.value.trim()) {
+            showError(carName, "car_name_error");
+            isValid = false;
+        }
+
+        if (!carType.value) {
+            showError(carType, "car_type_error");
+            isValid = false;
+        }
+
+        if (!companyName.value) {
+            showError(companyName, "company_name_error");
+            isValid = false;
+        }
+
+        if (pricePerDay.value <= 0) {
+            showError(pricePerDay, "price_per_day_error");
+            isValid = false;
+        }
+
+        if (stock.value <= 0) {
+            showError(stock, "stock_error");
+            isValid = false;
+        }
+
+        if (!fromLocation.value.trim()) {
+            showError(fromLocation, "from_location_error");
+            isValid = false;
+        }
+
+        if (!toLocation.value.trim()) {
+            showError(toLocation, "to_location_error");
+            isValid = false;
+        }
+
+        if (!carImage.value) {
+            showError(carImage, "car_image_error");
+            isValid = false;
+        }
+
+        if (!description.value.trim()) {
+            showError(description, "description_error");
+            isValid = false;
+        }
+
+        if (!isValid) return;
+
+        // If all fields are valid, submit the form data
+        const formData = new FormData(this);
+
+        // Submit form data via AJAX
+        fetch("{{ url_for('add_car') }}", {
+            method: "POST",
+            body: formData,
+        })
+        .then((response) => response.json())
+        .then((result) => {
+            if (result.success) {
+                alert("Car Added Successfully");
+                document.getElementById("add_car_form").reset(); // Reset form
+                document.getElementById("flashMessage").innerHTML = `<div class="alert alert-success">${result.message}</div>`;
+            } else {
+                document.getElementById("flashMessage").innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+    // Function to show error messages
+    function showError(inputElement, errorId) {
+        inputElement.classList.add("is-invalid");
+        document.getElementById(errorId).style.display = "block";
+    }
+
+    // Function to clear all error messages
+    function clearErrors() {
+        const invalidFields = document.querySelectorAll(".is-invalid");
+        invalidFields.forEach((field) => field.classList.remove("is-invalid"));
+        const errorMessages = document.querySelectorAll(".invalid-feedback");
+        errorMessages.forEach((msg) => (msg.style.display = "none"));
+    }
+
+    // Add event listeners to clear error messages when the user starts typing
+    const formFields = [
+        { id: "car_name", errorId: "car_name_error" },
+        { id: "car_type", errorId: "car_type_error" },
+        { id: "company_name", errorId: "company_name_error" },
+        { id: "price_per_day", errorId: "price_per_day_error" },
+        { id: "stock", errorId: "stock_error" },
+        { id: "from_location", errorId: "from_location_error" },
+        { id: "to_location", errorId: "to_location_error" },
+        { id: "car_image", errorId: "car_image_error" },
+        { id: "description", errorId: "description_error" },
+    ];
+
+    formFields.forEach((field) => {
+        const element = document.getElementById(field.id);
+        element.addEventListener("input", function () {
+            // Remove error if the user starts typing
+            if (element.classList.contains("is-invalid")) {
+                element.classList.remove("is-invalid");
+                document.getElementById(field.errorId).style.display = "none";
+            }
+        });
+    });
+</script>
+
+{% endblock %}

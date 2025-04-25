@@ -1,0 +1,210 @@
+/* Prevent horizontal scrolling */
+body {
+  overflow-x: hidden;
+  font-family: Arial, sans-serif;
+}
+
+/* Navbar Styling */
+.navbar {
+  border-bottom: 3px solid #4CAF50;
+  position: sticky;
+  top:0;
+  left: 0;
+  z-index: 9999;
+  /* background-color: yellow; */
+}
+
+
+.navbar-nav .nav-link {
+  color: #000;
+  font-weight: bold;
+}
+
+.navbar-nav .nav-link:hover {
+  color:  #59725a;
+  border-bottom:3px solid green ;
+
+}
+
+/* Feature Box Enhancements */
+.feature-box {
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.feature-box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Icon Styles */
+.icon {
+  display: inline-block;
+  padding: 15px;
+  border: 2px solid #dc3545;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.icon:hover {
+  transform: scale(1.1);
+}
+
+.icon i {
+  color: #dc3545;
+}
+
+/* About Us Section */
+.about-us img {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+.about-us img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* About Us Heading */
+.about-us h2 {
+  color: #333;
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+/* Read More Button */
+.btn-outline-danger {
+  border: 2px solid #dc3545;
+  color: #dc3545;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border-radius: 8px;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+/* Contact Section */
+.contact-header {
+  text-align: center;
+  margin: 40px 0;
+}
+
+.contact-header h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.contact-header p {
+  font-size: 16px;
+  color: #666;
+}
+
+/* Contact Form and Details */
+.contact-details, .contact-form {
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.contact-details h4 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #4CAF50;
+}
+
+.contact-details p {
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.contact-details i {
+  color: #4CAF50;
+  margin-right: 10px;
+}
+
+/* Google Maps Embed */
+iframe {
+  border: 0;
+  border-radius: 8px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+/* Primary Button */
+.btn-primary {
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #45A049;
+}
+
+/* Error Message */
+.error-message {
+  color: rgb(157, 16, 16);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar-nav .nav-link {
+      font-size: 14px;
+  }
+  
+  .feature-box {
+      margin-bottom: 20px;
+  }
+
+  .about-us h2 {
+      font-size: 28px;
+  }
+
+  .contact-header h1 {
+      font-size: 30px;
+  }
+
+  .contact-form, .contact-details {
+      padding: 15px;
+  }
+
+  .contact-details h4 {
+      font-size: 16px;
+  }
+
+  iframe {
+      height: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .feature-box {
+      padding: 15px;
+  }
+
+  .btn-outline-danger, .btn-primary {
+      width: 100%;
+  }
+  
+  .navbar-nav .nav-link {
+      font-size: 12px;
+  }
+
+  .contact-header h1 {
+      font-size: 28px;
+  }
+
+  iframe {
+      height: 200px;
+  }
+}
+
+
